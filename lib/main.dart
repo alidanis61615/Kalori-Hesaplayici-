@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'nutrition_trends.dart';
 import 'package:path/path.dart' as p;
@@ -42,6 +44,14 @@ class Store {
         await d.execute('CREATE TABLE settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)');
       } if(old<3){await d.execute('CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,grams REAL NOT NULL,kcal_per_100g REAL NOT NULL,protein REAL NOT NULL,carbs REAL NOT NULL,fat REAL NOT NULL)');} if(old<4){await d.execute('CREATE TABLE weight_entries (id INTEGER PRIMARY KEY AUTOINCREMENT,day TEXT NOT NULL,kg REAL NOT NULL CHECK(kg>0))');}});
     return _db!;
+  }
+  static Future<String> exportBackup() async {
+    final database=await db;
+    final tables=['food_entries','water_entries','settings','favorites','weight_entries'];
+    final data=<String,dynamic>{'format':'kalori_hesaplayici_backup','version':1,
+      'exported_at':DateTime.now().toIso8601String()};
+    for(final table in tables){data[table]=await database.query(table);}
+    return const JsonEncoder.withIndent('  ').convert(data);
   }
   static Future<List<WeightRecord>> weights() async {
     final rows=await (await db).query('weight_entries',orderBy:'day DESC,id DESC');
@@ -376,6 +386,24 @@ class _HomeState extends State<Home> {
           ]))
         ]else if(tab==4)...[
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('Beslenme hedeflerin',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:12),Text('${target.toStringAsFixed(0)} kcal',style:const TextStyle(fontSize:30,fontWeight:FontWeight.bold)),Text('Protein ${pt.toStringAsFixed(0)} g'),Text('Karbonhidrat ${ct.toStringAsFixed(0)} g'),Text('Yağ ${ft.toStringAsFixed(0)} g'),const SizedBox(height:12),OutlinedButton.icon(onPressed:editGoals,icon:const Icon(Icons.edit),label:const Text('Hedefleri düzenle'))])),
+          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+            const Text('Veri yedeği',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
+            const SizedBox(height:8),
+            const Text('Besin, su, hedef, favori ve kilo kayıtlarını JSON biçiminde panoya kopyala. Metni güvenli bir dosyaya kaydet.'),
+            const SizedBox(height:12),
+            FilledButton.icon(icon:const Icon(Icons.copy_all_outlined),
+              label:const Text('Yedeği panoya kopyala'),onPressed:()async{
+                try{
+                  final backup=await Store.exportBackup();
+                  await Clipboard.setData(ClipboardData(text:backup));
+                  if(mounted)ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content:Text('Yedek panoya kopyalandı. Güvenli bir yere yapıştırıp kaydet.')));
+                }catch(e){fail(e);}
+              }),
+            const SizedBox(height:8),
+            const Text('Bu sürümde geri yükleme henüz yok. Panodaki içerik başka uygulamalar tarafından okunabilir.',
+              style:TextStyle(fontSize:12)),
+          ])),
           card(const Text('Verilerin cihazındaki SQLite veritabanında saklanır. Bulut senkronizasyonu, fotoğraftan besin analizi ve sağlık uygulaması bağlantısı bu sürümde yok.'))
         ]
       ])));
