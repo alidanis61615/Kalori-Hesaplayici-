@@ -2,9 +2,9 @@
 
 **PaketKap**, Türkçe arayüzlü, çevrimdışı çalışan Android kalori ve beslenme takip uygulamasıdır. Flutter, Dart, Material 3 ve SQLite ile geliştirilmiştir.
 
-[![Flutter CI](https://github.com/alidanis61615/Kalori-Hesaplayici-/actions/workflows/flutter-checks.yml/badge.svg)](https://github.com/alidanis61615/Kalori-Hesaplayici-/actions/workflows/flutter-checks.yml)
+[![Flutter CI](https://github.com/alidanis61615/PaketKap/actions/workflows/flutter-checks.yml/badge.svg)](https://github.com/alidanis61615/PaketKap/actions/workflows/flutter-checks.yml)
 
-**Hızlı bağlantılar:** [Teknik portföy özeti](docs/PORTFOLIO_OVERVIEW.md) · [Ekran görüntüsü ve yayın kontrol listesi](docs/PORTFOLIO_CHECKLIST.md) · [Otomatik testler ve APK](https://github.com/alidanis61615/Kalori-Hesaplayici-/actions)
+**Hızlı bağlantılar:** [Teknik portföy özeti](docs/PORTFOLIO_OVERVIEW.md) · [Ekran görüntüsü ve yayın kontrol listesi](docs/PORTFOLIO_CHECKLIST.md) · [Otomatik testler ve APK](https://github.com/alidanis61615/PaketKap/actions)
 
 > **Portföy demosu:** Gün Özeti ekranında bir besin ekleyin; ardından su takibini ve Trendler ekranındaki 7 günlük grafikleri inceleyin. Uygulama internetsiz çalışır. Gerçek cihaz ekran görüntüleri henüz depoya eklenmedi.
 
@@ -31,14 +31,14 @@ Besin değerleri elle girilir; katalogdaki değerler yaklaşık örneklerdir. Uy
 - JSON yedek içeriğini kontrol edip geri yüklemeyi veritabanı işlemi (transaction) içinde gerçekleştirme.
 - GitHub Actions ile statik analiz, otomatik test ve Android debug APK üretimi.
 
-> **İsimlendirme notu:** Kullanıcıya görünen marka adı PaketKap'tır. GitHub depo URL'si ve Flutter proje kimliği geçmiş sürümlerle uyumluluk için şimdilik eski adını korur.
+> **İsimlendirme notu:** GitHub deposu ve kullanıcıya görünen marka adı PaketKap'tır. Flutter proje kimliği (`kalori_hesaplayici`) mevcut Android uygulama kimliğiyle uyumluluğu korumak için değiştirilmemiştir.
 
 ## Yerelde çalıştırma
 Flutter SDK ve Android geliştirme araçları gerekir.
 
 ```bash
-git clone https://github.com/alidanis61615/Kalori-Hesaplayici-.git
-cd Kalori-Hesaplayici-
+git clone https://github.com/alidanis61615/PaketKap.git
+cd PaketKap
 flutter create --platforms=android --project-name kalori_hesaplayici .
 flutter pub get
 flutter run
