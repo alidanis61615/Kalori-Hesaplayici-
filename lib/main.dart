@@ -114,6 +114,7 @@ class Store {
   static Future<void> delete(int id) async { await (await db).delete('food_entries',where:'id=?',whereArgs:[id]); }
   static Future<void> update(Food f) async { if(f.id==null) throw ArgumentError('Missing food id'); await (await db).update('food_entries',f.toMap(),where:'id=?',whereArgs:[f.id]); }
   static Future<int> water(String date) async { final rows=await (await db).query('water_entries',where:'day=?',whereArgs:[date]); return rows.isEmpty?0:rows.first['ml'] as int; }
+  static Future<Map<String,int>> waterHistory() async { final rows=await (await db).query('water_entries'); return {for(final row in rows) row['day'] as String: row['ml'] as int}; }
   static Future<void> addWater(String date,int ml) async { final total=await water(date)+ml; await (await db).insert('water_entries',{'day':date,'ml':total},conflictAlgorithm:ConflictAlgorithm.replace); }
   static Future<void> removeWater(String date,int ml) async { final total=((await water(date))-ml).clamp(0,1000000); await (await db).insert('water_entries',{'day':date,'ml':total},conflictAlgorithm:ConflictAlgorithm.replace); }
   static Future<String?> getSetting(String key) async { final rows=await (await db).query('settings',where:'key=?',whereArgs:[key]); return rows.isEmpty?null:rows.first['value'] as String; }
@@ -125,14 +126,14 @@ class CalorieApp extends StatelessWidget {
 }
 class Home extends StatefulWidget { const Home({super.key}); @override State<Home> createState()=>_HomeState(); }
 class _HomeState extends State<Home> {
-  List<Food> foods=[]; List<WeightRecord> weights=[]; DateTime selected=DateTime.now(); int tab=0,water=0,trendDays=30;
+  List<Food> foods=[]; List<WeightRecord> weights=[]; Map<String,int> waterDays={}; DateTime selected=DateTime.now(); int tab=0,water=0,trendDays=30;
   double target=2200,pt=120,ct=260,ft=70,waterGoal=2000; String filter='Tümü'; String? error;
   final meals=['Kahvaltı','Öğle','Akşam','Atıştırmalık','Diğer'];
   @override void initState(){super.initState();reload();}
   Future<void> reload() async {try {
-    final f=await Store.foods(), w=await Store.water(day(selected)), weightRecords=await Store.weights();
+    final f=await Store.foods(), w=await Store.water(day(selected)), weightRecords=await Store.weights(), history=await Store.waterHistory();
     final settings=await Future.wait(['calories','protein','carbs','fat','water_goal'].map(Store.getSetting));
-    if(mounted)setState((){foods=f;weights=weightRecords;water=w;target=double.tryParse(settings[0]??'')??2200;pt=double.tryParse(settings[1]??'')??120;ct=double.tryParse(settings[2]??'')??260;ft=double.tryParse(settings[3]??'')??70;waterGoal=double.tryParse(settings[4]??'')??2000;error=null;});
+    if(mounted)setState((){foods=f;weights=weightRecords;waterDays=history;water=w;target=double.tryParse(settings[0]??'')??2200;pt=double.tryParse(settings[1]??'')??120;ct=double.tryParse(settings[2]??'')??260;ft=double.tryParse(settings[3]??'')??70;waterGoal=double.tryParse(settings[4]??'')??2000;error=null;});
   }catch(e){if(mounted)setState(()=>error='Veriler yüklenemedi: $e');}}
   void fail(Object e){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('İşlem başarısız: $e')));}
   Widget card(Widget child)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.only(bottom:12),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(24),side:const BorderSide(color:Color(0xFFE0E5E2))),child:Padding(padding:const EdgeInsets.all(16),child:child));
@@ -295,6 +296,33 @@ class _HomeState extends State<Home> {
               const Text('Ortalamalar yalnızca öğün kaydı olan günlerden hesaplanır. Eksik kayıtlar gerçek tüketimi yansıtmayabilir.')
             ]));
           }),
+          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+            const Text('Son 7 gün su tüketimi',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
+            const SizedBox(height:6),
+            const Text('Her sütun o gün kaydettiğin toplam su miktarını gösterir.'),
+            const SizedBox(height:12),
+            SizedBox(height:170,child:Row(crossAxisAlignment:CrossAxisAlignment.end,
+              children:List.generate(7,(i){
+                final date=DateTime.now().subtract(Duration(days:6-i));
+                final key=day(date);
+                final ml=waterDays[key]??0;
+                final factor=waterGoal>0?(ml/waterGoal).clamp(0.0,1.0):0.0;
+                return Expanded(child:Padding(padding:const EdgeInsets.symmetric(horizontal:3),
+                  child:Column(mainAxisAlignment:MainAxisAlignment.end,children:[
+                    Text('${ml} ml',style:const TextStyle(fontSize:10),maxLines:1),
+                    const SizedBox(height:5),
+                    SizedBox(height:110,child:Align(alignment:Alignment.bottomCenter,
+                      child:FractionallySizedBox(heightFactor:factor,
+                        child:Container(decoration:BoxDecoration(color:Colors.lightBlue,
+                          borderRadius:BorderRadius.circular(6)))))),
+                    const SizedBox(height:5),
+                    Text(key.substring(5),style:const TextStyle(fontSize:10)),
+                  ])));
+              }))),
+            const SizedBox(height:8),
+            Text('Sütun yüksekliği günlük ${waterGoal.toStringAsFixed(0)} ml hedefine göre ölçeklenir. Hedefin üzerindeki miktarlar da sayı olarak gösterilir.',
+              style:const TextStyle(fontSize:12)),
+          ])),
           if(weights.length>=2)card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
             const Text('Kilo değişim grafiği',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
             const SizedBox(height:6),
