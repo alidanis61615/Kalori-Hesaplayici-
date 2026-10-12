@@ -300,6 +300,18 @@ class _HomeState extends State<Home> {
             const Text('Son 7 gün su tüketimi',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
             const SizedBox(height:6),
             const Text('Her sütun o gün kaydettiğin toplam su miktarını gösterir.'),
+            Builder(builder:(context){
+              final values=List.generate(7,(i)=>waterDays[day(DateTime.now().subtract(Duration(days:6-i)))]??0);
+              final total=values.fold<int>(0,(sum,ml)=>sum+ml);
+              final recorded=values.where((ml)=>ml>0).length;
+              final reached=waterGoal>0?values.where((ml)=>ml>=waterGoal).length:0;
+              return Padding(padding:const EdgeInsets.only(top:10),child:Column(
+                crossAxisAlignment:CrossAxisAlignment.start,children:[
+                  Text('Toplam: $total ml · Kayıtlı gün: $recorded/7',
+                    style:const TextStyle(fontWeight:FontWeight.w600)),
+                  Text('Günlük ortalama: ${(total/7).toStringAsFixed(0)} ml · Hedefe ulaşan gün: $reached/7'),
+                ]));
+            }),
             const SizedBox(height:12),
             SizedBox(height:170,child:Row(crossAxisAlignment:CrossAxisAlignment.end,
               children:List.generate(7,(i){
