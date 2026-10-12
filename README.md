@@ -1,6 +1,6 @@
-# Kalori Hesaplayıcı | Flutter & Dart
+# PaketKap | Flutter & Dart
 
-Türkçe arayüzlü, çevrimdışı çalışan Android kalori ve beslenme takip uygulaması. Flutter, Dart, Material 3 ve SQLite ile geliştirilmiştir.
+**PaketKap**, Türkçe arayüzlü, çevrimdışı çalışan Android kalori ve beslenme takip uygulamasıdır. Paket teslimatı uygulaması değildir. Flutter, Dart, Material 3 ve SQLite ile geliştirilmiştir.
 
 ## Özellikler
 - **Gün özeti:** Kalori, protein, karbonhidrat ve yağ hedefleri; kalan kalori bilgisi.
