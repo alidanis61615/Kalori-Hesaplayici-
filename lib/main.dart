@@ -409,6 +409,27 @@ class _HomeState extends State<Home> {
               const Text('Ortalamalar yalnızca öğün kaydı bulunan günleri içerir.'),
             ]));
           }),
+          Builder(builder:(context){
+            final start=DateTime(selected.year,selected.month,selected.day).subtract(const Duration(days:6));
+            final totals=<String,double>{};
+            for(final food in foods){
+              if(food.date.compareTo(day(start))>=0 && food.date.compareTo(day(selected))<=0){
+                totals.update(food.date,(value)=>value+food.energy,ifAbsent:()=>food.energy);
+              }
+            }
+            final close=totals.values.where((v)=>target>0 && v>=target*0.9 && v<=target*1.1).length;
+            return card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+              const Text('Hedefe yakın günler',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
+              const SizedBox(height:8),
+              Text('$close / ${totals.length} kayıtlı gün',
+                style:const TextStyle(fontSize:24,fontWeight:FontWeight.bold)),
+              const SizedBox(height:8),
+              Text('Son 7 günde kalori hedefinin %90–110 aralığında kalan kayıtlı günler.'),
+              const SizedBox(height:8),
+              const Text('Eksik öğün kayıtları sonucu etkiler. Bu gösterge sağlık veya beslenme tavsiyesi değildir.',
+                style:TextStyle(fontSize:12)),
+            ]));
+          }),
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
             const Text('Kilo ölçüm özeti',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
             const SizedBox(height:12),
