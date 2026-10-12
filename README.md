@@ -78,7 +78,22 @@ Kayıtlar varsayılan olarak cihazdaki SQLite veritabanında tutulur; bulut eşi
 - Su hedefi örnek bir değerdir; kişiye özel sağlık önerisi değildir.
 - Android sürümleri ve farklı ekran boyutlarında ek testler yapılmalıdır.
 
+## Uygulamadan ekranlar
+
+Gerçek cihazda alınmış ekran görüntüleri için hazırlanan galeri:
+
+| Ekran | Ne gösteriyor? |
+| --- | --- |
+| Gün Özeti | Günlük kalori ve makro hedefleri |
+| Öğün ve Su Takibi | Öğün ekleme, hazır besin, favoriler ve su miktarı |
+| Trendler | 7/30/90 günlük analiz ve su tüketimi grafiği |
+| Besin Ekleme | Porsiyon ve 100 gram üzerinden besin değerleri |
+| Raporlar | Günlük enerji, makrolar ve su hedefi özeti |
+| Profil | Kişisel hedefler ve JSON veri yedeği |
+
+> **Not:** Ekran görüntüleri kullanıcı tarafından paylaşıldı ancak görsel dosyaları henüz depoya yüklenmedi. Dosyalar eklendiğinde tablo doğrudan görsellerle değiştirilecek. Örnek veriler gerçek tüketim verisi olarak sunulmaz.
+
 ## Proje durumu
-Yeni geliştirmeler `feature/portfolio-improvements-2026` dalında, ana dalı koruyan bir pull request üzerinden yürütülür. GitHub'da sergilenecek ekran görüntüleri ayrıca eklenebilir.
+Portföy geliştirmeleri test edilerek Pull Request #1 üzerinden `main` dalına birleştirildi. Uygulama Android cihazda manuel olarak da denendi. Ekran görüntüsü dosyalarının GitHub deposuna yüklenmesi henüz tamamlanmadı.
 
 **Geliştirme amacı:** Flutter/Dart, yerel veri saklama, kullanıcı arayüzü, hata ayıklama ve CI/CD becerilerini uygulamalı bir portföy projesinde göstermek.
