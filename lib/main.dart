@@ -286,7 +286,7 @@ class _HomeState extends State<Home> {
                           borderRadius:const BorderRadius.vertical(top:Radius.circular(7)))))),
                     const SizedBox(height:7),
                     Text('${d.day}/${d.month}',style:const TextStyle(fontSize:10)),
-                  ]))));
+                  ])));
               }))),
             const SizedBox(height:10),
             const Text('Çubuklar günlük hedefe göre ölçeklenir; hedefi aşan değerler tam yükseklikte görünür.',
