@@ -34,3 +34,20 @@ GitHub deposundaki **Actions → Build Android APK** iş akışını açın. Ba�
 
 ## Geliştirme
 Bu depo, Flutter becerilerini geliştirmek ve portföy oluşturmak amacıyla hazırlanmıştır.
+
+## Ekran görüntülerindeki hedef deneyim
+
+Paylaşılan uygulama ekranları, geliştirme için görsel referans niteliğindedir. Aşağıdakiler **mevcut kodda doğrulanmış özellikler olarak sunulmaz**:
+
+- Gün özeti, günlük enerji ve makro hedef kartları
+- Antrenman başlatma, gelişim planı ve antrenman geçmişi
+- Öğün planı oluşturma, öğün filtreleri ve hızlı besin ekleme
+- Su, adım ve haftalık alışkanlık takibi
+- 7/30/90 günlük trendler, kilo ölçümleri ve haftalık hedefler
+- Fotoğrafla besin analizi ve AI koç sohbeti
+
+Bu ekranların gerçek işlevleri için kaynak kod, izinler, veri saklama ve cihaz testleri ayrıca geliştirilmelidir. Özellikle fotoğraftan besin değeri tahmini tıbbi kesinlik taşımaz.
+
+## Güvenli katkı ve güncelleme
+
+TaskFlow ayrı bir uygulamadır; bu depoya TaskFlow kaynak kodları kopyalanmamalıdır. Değişikliklerden önce ayrı bir dal açın, veritabanı geçişlerini ve mevcut kullanıcı kayıtlarını test edin, ardından pull request üzerinden birleştirin. Şifre, API anahtarı, kişisel sağlık verisi ve yerel veritabanı dosyalarını depoya eklemeyin.
