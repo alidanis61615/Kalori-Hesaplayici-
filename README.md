@@ -4,10 +4,11 @@ Gönderilen beslenme uygulaması ekranlarından ilham alınarak geliştirilen, �
 
 ## Özellikler
 - **Bugün:** Günlük kalori, protein, karbonhidrat ve yağ toplamları ile hedef ilerleme çubukları
-- **Öğünler:** Kahvaltı, öğle, akşam, atıştırmalık ve diğer kategorileri; filtreleme, ekleme ve silme
+- **Öğünler:** Kahvaltı, öğle, akşam, atıştırmalık ve diğer kategorileri; filtreleme, ekleme, düzenleme ve silme
 - **Hesaplama:** Porsiyon gramı × 100 gramdaki besin değeri / 100
 - **Su takibi:** 100, 250 veya 500 ml ekleme; günlük kayıt
 - **Trendler:** Son yedi günün kalori kayıtları ve hedef karşılaştırması
+- **Raporlar:** Seçili günün kalori, makro, su ve öğün dağılımı; son 7 günün kayıt özeti
 - **Profil:** Kalori ve makro hedeflerini düzenleme
 - **SQLite:** Çevrimdışı saklama; eski sürümün yiyecek kayıtlarını koruyan v1 → v2 veritabanı geçişi
 
