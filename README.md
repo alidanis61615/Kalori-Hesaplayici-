@@ -1,53 +1,55 @@
-# Kalori Hesaplayıcı — Flutter
+# Kalori Hesaplayıcı | Flutter & Dart
 
-Gönderilen beslenme uygulaması ekranlarından ilham alınarak geliştirilen, çevrimdışı çalışan Flutter/Dart portföy projesi. Özgün ve sade bir arayüz kullanır.
+Türkçe arayüzlü, çevrimdışı çalışan Android kalori ve beslenme takip uygulaması. Flutter, Dart, Material 3 ve SQLite ile geliştirilmiştir.
 
 ## Özellikler
-- **Bugün:** Günlük kalori, protein, karbonhidrat ve yağ toplamları ile hedef ilerleme çubukları
-- **Öğünler:** Kahvaltı, öğle, akşam, atıştırmalık ve diğer kategorileri; filtreleme, ekleme, düzenleme ve silme
-- **Hesaplama:** Porsiyon gramı × 100 gramdaki besin değeri / 100
-- **Su takibi:** 100, 250 veya 500 ml ekleme; günlük kayıt
-- **Trendler:** Son yedi günün kalori kayıtları ve hedef karşılaştırması
-- **Raporlar:** Seçili günün kalori, makro, su ve öğün dağılımı; son 7 günün kayıt özeti
-- **Profil:** Kalori ve makro hedeflerini düzenleme
-- **SQLite:** Çevrimdışı saklama; eski sürümün yiyecek kayıtlarını koruyan v1 → v2 veritabanı geçişi
+- **Gün özeti:** Kalori, protein, karbonhidrat ve yağ hedefleri; kalan kalori bilgisi.
+- **Öğün takibi:** Besin ekleme, düzenleme, silme; kahvaltı/öğle/akşam/atıştırmalık kategorileri.
+- **Besin kataloğu ve favoriler:** Örnek besinlerden hızlı ekleme; gram ve 100 gramlık değerleri düzenleme.
+- **Su takibi:** Günlük içilen suyu kaydetme.
+- **Trendler:** 7/30/90 günlük beslenme ortalamaları, son 7 gün kalori grafiği, kilo ölçümleri ve kilo grafiği.
+- **Raporlar:** Günlük ve haftalık özetler.
+- **Profil:** Kalori ve makro hedeflerini düzenleme.
+- **Yerel yedek:** Besin, su, kilo, favori ve hedefleri JSON biçiminde panoya kopyalama; panodan geri yükleme. Geri yükleme mevcut kayıtların **tamamını değiştirir** ve onay ister.
+
+Besin değerleri elle girilir; katalogdaki değerler yaklaşık örneklerdir. Uygulama tıbbi tavsiye sunmaz.
 
 ## Teknolojiler
-Flutter, Dart, Material 3, sqflite, path, GitHub Actions.
+- Flutter / Dart / Material 3
+- SQLite (`sqflite`) ve `path`
+- Flutter testleri ve GitHub Actions (analiz, test, debug APK)
 
-## Çalıştırma
+## Yerelde çalıştırma
+Flutter SDK ve Android geliştirme araçları gerekir.
+
 ```bash
+git clone https://github.com/alidanis61615/Kalori-Hesaplayici-.git
+cd Kalori-Hesaplayici-
 flutter create --platforms=android --project-name kalori_hesaplayici .
 flutter pub get
 flutter run
 ```
 
-## APK
-GitHub deposundaki **Actions → Build Android APK** iş akışını açın. Başarılı çalışmanın **Artifacts** bölümünden APK'yı indirebilirsiniz.
+## Android APK
+**Actions → Flutter checks / Build Android APK → başarılı çalışma → Artifacts** bölümünden `kalori-hesaplayici-debug-apk` dosyasını indirin. Bu bir **debug** derlemesidir; mağaza yayınına hazır imzalı sürüm değildir.
 
-## Sınırlar ve geliştirme planı
-- Besin değerleri kullanıcı tarafından elle girilir; hazır besin veri tabanı yoktur.
-- Fotoğrafla yapay zekâ analizi, Samsung Health/Health Connect, adım ve uyku ölçümü **henüz entegre edilmemiştir**.
-- Su hedefi şimdilik 2000 ml örnek değerdir; kişisel sağlık önerisi değildir.
-- Mevcut besin kayıtlarının yeni eklenen makro alanları 0 olarak başlar; eski kayıtlar için makrolar otomatik tahmin edilmez.
-- Cihazda gerçek kullanım, farklı ekran boyutları ve APK derlemesi ayrıca doğrulanmalıdır.
+## Test
+```bash
+flutter analyze --no-fatal-infos
+flutter test
+flutter build apk --debug
+```
 
-## Geliştirme
-Bu depo, Flutter becerilerini geliştirmek ve portföy oluşturmak amacıyla hazırlanmıştır.
+## Veri güvenliği
+Kayıtlar varsayılan olarak cihazdaki SQLite veritabanında tutulur; bulut eşitleme yoktur. JSON yedeği panoya kopyalanır; panodaki içerik diğer uygulamalar tarafından okunabilir. Yedeği güvenli bir yerde saklayın. Geri yükleme mevcut kayıtları silip yedektekilerle değiştirir. Güncelleme öncesi uygulamayı kaldırmayın.
 
-## Ekran görüntülerindeki hedef deneyim
+## Bilinen sınırlar
+- Fotoğraftan otomatik besin analizi, barkod tarama, Health Connect ve bulut senkronizasyonu bulunmaz.
+- Kalori ve kilo grafikleri yalnızca kullanıcı tarafından girilen verileri gösterir.
+- Su hedefi örnek bir değerdir; kişiye özel sağlık önerisi değildir.
+- Android sürümleri ve farklı ekran boyutlarında ek testler yapılmalıdır.
 
-Paylaşılan uygulama ekranları, geliştirme için görsel referans niteliğindedir. Aşağıdakiler **mevcut kodda doğrulanmış özellikler olarak sunulmaz**:
+## Proje durumu
+Yeni geliştirmeler `feature/portfolio-improvements-2026` dalında, ana dalı koruyan bir pull request üzerinden yürütülür. GitHub'da sergilenecek ekran görüntüleri ayrıca eklenebilir.
 
-- Gün özeti, günlük enerji ve makro hedef kartları
-- Antrenman başlatma, gelişim planı ve antrenman geçmişi
-- Öğün planı oluşturma, öğün filtreleri ve hızlı besin ekleme
-- Su, adım ve haftalık alışkanlık takibi
-- 7/30/90 günlük trendler, kilo ölçümleri ve haftalık hedefler
-- Fotoğrafla besin analizi ve AI koç sohbeti
-
-Bu ekranların gerçek işlevleri için kaynak kod, izinler, veri saklama ve cihaz testleri ayrıca geliştirilmelidir. Özellikle fotoğraftan besin değeri tahmini tıbbi kesinlik taşımaz.
-
-## Güvenli katkı ve güncelleme
-
-TaskFlow ayrı bir uygulamadır; bu depoya TaskFlow kaynak kodları kopyalanmamalıdır. Değişikliklerden önce ayrı bir dal açın, veritabanı geçişlerini ve mevcut kullanıcı kayıtlarını test edin, ardından pull request üzerinden birleştirin. Şifre, API anahtarı, kişisel sağlık verisi ve yerel veritabanı dosyalarını depoya eklemeyin.
+**Geliştirme amacı:** Flutter/Dart, yerel veri saklama, kullanıcı arayüzü, hata ayıklama ve CI/CD becerilerini uygulamalı bir portföy projesinde göstermek.
