@@ -1,0 +1,41 @@
+name: Flutter checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/portfolio-improvements-2026]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate Android project files
+        run: |
+          flutter create --platforms=android --project-name kalori_hesaplayici .
+          # flutter create may add a default MyApp test, but this app uses CalorieApp.
+          rm -f test/widget_test.dart
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+      - name: Test
+        run: flutter test
+      - name: Build APK
+        run: flutter build apk --debug
+      - name: Upload installable debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: kalori-hesaplayici-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
