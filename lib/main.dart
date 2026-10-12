@@ -80,6 +80,37 @@ class _HomeState extends State<Home> {
     ]))))));
     if(result!=null){try{if(existing==null){await Store.add(result);}else{await Store.update(result);}await reload();}catch(e){fail(e);}}
   }
+  Future<void> searchCatalog() async {
+    // Approximate sample values per 100 g; users can edit values before saving.
+    final catalog=<Food>[
+      Food(name:'Muz',meal:'Atıştırmalık',date:'',grams:100,kcal:89,protein:1.1,carbs:22.8,fat:0.3),
+      Food(name:'Elma',meal:'Atıştırmalık',date:'',grams:100,kcal:52,protein:0.3,carbs:13.8,fat:0.2),
+      Food(name:'Yumurta (haşlanmış)',meal:'Kahvaltı',date:'',grams:100,kcal:155,protein:12.6,carbs:1.1,fat:10.6),
+      Food(name:'Süt (tam yağlı)',meal:'Kahvaltı',date:'',grams:100,kcal:61,protein:3.2,carbs:4.8,fat:3.3),
+      Food(name:'Yoğurt (sade)',meal:'Atıştırmalık',date:'',grams:100,kcal:61,protein:3.5,carbs:4.7,fat:3.3),
+      Food(name:'Beyaz peynir',meal:'Kahvaltı',date:'',grams:100,kcal:264,protein:14.2,carbs:3.9,fat:21.3),
+      Food(name:'Ekmek (beyaz)',meal:'Kahvaltı',date:'',grams:100,kcal:265,protein:9,carbs:49,fat:3.2),
+      Food(name:'Pirinç pilavı (pişmiş)',meal:'Öğle',date:'',grams:100,kcal:130,protein:2.7,carbs:28.2,fat:0.3),
+      Food(name:'Makarna (haşlanmış)',meal:'Öğle',date:'',grams:100,kcal:158,protein:5.8,carbs:30.9,fat:0.9),
+      Food(name:'Tavuk göğsü (pişmiş)',meal:'Akşam',date:'',grams:100,kcal:165,protein:31,carbs:0,fat:3.6),
+      Food(name:'Mercimek (haşlanmış)',meal:'Öğle',date:'',grams:100,kcal:116,protein:9,carbs:20.1,fat:0.4),
+      Food(name:'Patates (haşlanmış)',meal:'Akşam',date:'',grams:100,kcal:87,protein:1.9,carbs:20.1,fat:0.1),
+    ];
+    String query='';
+    final chosen=await showModalBottomSheet<Food>(context:context,isScrollControlled:true,showDragHandle:true,builder:(sheet)=>StatefulBuilder(builder:(ctx,update){
+      final matches=catalog.where((f)=>f.name.toLowerCase().contains(query.toLowerCase())).toList();
+      return SafeArea(child:Padding(padding:EdgeInsets.fromLTRB(16,8,16,MediaQuery.viewInsetsOf(ctx).bottom+12),child:SizedBox(height:MediaQuery.sizeOf(ctx).height*0.65,child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
+        Text('Hazır besin ara',style:Theme.of(ctx).textTheme.headlineSmall),
+        const SizedBox(height:8),
+        const Text('Besin değerleri yaklaşık örneklerdir (100 g). Ürüne ve pişirme şekline göre değişir.'),
+        const SizedBox(height:12),
+        TextField(autofocus:true,decoration:const InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Muz, yumurta, pilav...'),onChanged:(v)=>update(()=>query=v)),
+        const SizedBox(height:8),
+        Expanded(child:ListView(children:matches.map((f)=>ListTile(title:Text(f.name),subtitle:Text('${f.kcal.toStringAsFixed(0)} kcal / 100 g · P ${f.protein.toStringAsFixed(1)} g'),trailing:const Icon(Icons.chevron_right),onTap:()=>Navigator.pop(sheet,f))).toList())),
+      ]))));
+    }));
+    if(chosen!=null&&mounted){await addFood(chosen);}
+  }
   Future<void> addFromSaved(Food food) async {
     try {await Store.add(Food(name:food.name,meal:'Kahvaltı',date:day(selected),grams:food.grams,kcal:food.kcal,protein:food.protein,carbs:food.carbs,fat:food.fat));await reload();
       if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('${food.name} eklendi')));
@@ -139,7 +170,7 @@ class _HomeState extends State<Home> {
             SingleChildScrollView(scrollDirection:Axis.horizontal,child:Row(children:['Tümü',...meals].map((m)=>Padding(padding:const EdgeInsets.only(right:6),child:ChoiceChip(label:Text(m),selected:filter==m,onSelected:(_)=>setState(()=>filter=m)))).toList())),
             if(today.where((f)=>filter=='Tümü'||f.meal==filter).isEmpty)const Padding(padding:EdgeInsets.all(16),child:Text('Bu öğün için henüz kayıt yok.')),
             ...today.where((f)=>filter=='Tümü'||f.meal==filter).map((f)=>ListTile(contentPadding:EdgeInsets.zero,title:Text(f.name),subtitle:Text('${f.meal} · ${f.grams.toStringAsFixed(0)} g · ${f.energy.toStringAsFixed(0)} kcal'),onTap:()=>addFood(f),trailing:PopupMenuButton<String>(tooltip:'Öğün işlemleri',onSelected:(action)async{if(action=='edit'){await addFood(f);}else if(action=='favorite'){try{await Store.saveFavorite(f);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Favorilere eklendi')));}catch(e){fail(e);}}else{final confirmed=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(title:const Text('Öğün silinsin mi?'),content:Text('${f.name} kaydı silinecek.'),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('Vazgeç')),FilledButton(onPressed:()=>Navigator.pop(ctx,true),child:const Text('Sil'))]));if(confirmed==true){try{await Store.delete(f.id!);await reload();}catch(e){fail(e);}}}},itemBuilder:(_)=>const [PopupMenuItem(value:'edit',child:Text('Düzenle')),PopupMenuItem(value:'favorite',child:Text('Favorilere ekle')),PopupMenuItem(value:'delete',child:Text('Sil'))]))),
-            FilledButton.icon(onPressed:()=>addFood(),icon:const Icon(Icons.add),label:const Text('Besin ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:savedFoods,icon:const Icon(Icons.favorite_outline),label:const Text('Favorilerden ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:copyMealsToTomorrow,icon:const Icon(Icons.event_note_outlined),label:const Text('Öğünleri yarına kopyala'))])),
+            FilledButton.icon(onPressed:()=>addFood(),icon:const Icon(Icons.add),label:const Text('Besin ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:searchCatalog,icon:const Icon(Icons.search),label:const Text('Hazır besin ara')),const SizedBox(height:8),OutlinedButton.icon(onPressed:savedFoods,icon:const Icon(Icons.favorite_outline),label:const Text('Favorilerden ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:copyMealsToTomorrow,icon:const Icon(Icons.event_note_outlined),label:const Text('Öğünleri yarına kopyala'))])),
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('Su takibi',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:12),meter('Günlük su',water.toDouble(),2000,'ml'),const SizedBox(height:12),Wrap(spacing:8,runSpacing:8,children:[...([100,250,500].map((ml)=>OutlinedButton(onPressed:()async{try{await Store.addWater(day(selected),ml);await reload();}catch(e){fail(e);}},child:Text('+$ml ml')))),OutlinedButton.icon(onPressed:water==0?null:()async{try{await Store.removeWater(day(selected),100);await reload();}catch(e){fail(e);}},icon:const Icon(Icons.remove),label:const Text('100 ml geri al'))])]))
         ]else if(tab==1)...[
           const Text('Son 7 günün kalori kayıtları'),const SizedBox(height:16),
