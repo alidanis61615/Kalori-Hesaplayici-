@@ -160,8 +160,10 @@ class _CalorieHomeState extends State<CalorieHome> {
       setState(() => selectedDate = DateTime.now());
       await refresh();
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kayıt eklenemedi: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kayıt eklenemedi: $e')));
+      }
     }
   }
 
