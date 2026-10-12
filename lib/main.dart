@@ -21,21 +21,25 @@ class Store {
   static Database? _db;
   static Future<Database> get db async {
     if (_db != null) return _db!;
-    _db = await openDatabase(p.join(await getDatabasesPath(),'calorie_tracker.db'),version:2,
+    _db = await openDatabase(p.join(await getDatabasesPath(),'calorie_tracker.db'),version:3,
       onCreate:(d,v) async {
         await d.execute('CREATE TABLE food_entries (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,grams REAL NOT NULL,kcal_per_100g REAL NOT NULL,created_at TEXT NOT NULL,meal TEXT NOT NULL DEFAULT "Diğer",protein REAL NOT NULL DEFAULT 0,carbs REAL NOT NULL DEFAULT 0,fat REAL NOT NULL DEFAULT 0)');
         await d.execute('CREATE TABLE water_entries (day TEXT PRIMARY KEY,ml INTEGER NOT NULL)');
         await d.execute('CREATE TABLE settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)');
+        await d.execute('CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,grams REAL NOT NULL,kcal_per_100g REAL NOT NULL,protein REAL NOT NULL,carbs REAL NOT NULL,fat REAL NOT NULL)');
       },
       onUpgrade:(d,old,v) async { if(old<2) {
         for(final col in ['meal TEXT NOT NULL DEFAULT "Diğer"','protein REAL NOT NULL DEFAULT 0','carbs REAL NOT NULL DEFAULT 0','fat REAL NOT NULL DEFAULT 0']) { await d.execute('ALTER TABLE food_entries ADD COLUMN $col'); }
         await d.execute('CREATE TABLE water_entries (day TEXT PRIMARY KEY,ml INTEGER NOT NULL)');
         await d.execute('CREATE TABLE settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)');
-      }});
+      } if(old<3){await d.execute('CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,grams REAL NOT NULL,kcal_per_100g REAL NOT NULL,protein REAL NOT NULL,carbs REAL NOT NULL,fat REAL NOT NULL)');}});
     return _db!;
   }
   static Future<List<Food>> foods() async => (await (await db).query('food_entries',orderBy:'created_at DESC,id DESC')).map(Food.fromMap).toList();
   static Future<void> add(Food f) async { await (await db).insert('food_entries',f.toMap()); }
+  static Future<List<Food>> favorites() async => (await (await db).query('favorites',orderBy:'name COLLATE NOCASE')).map((m)=>Food(id:m['id'] as int,name:m['name'] as String,meal:'Kahvaltı',date:'',grams:(m['grams'] as num).toDouble(),kcal:(m['kcal_per_100g'] as num).toDouble(),protein:(m['protein'] as num).toDouble(),carbs:(m['carbs'] as num).toDouble(),fat:(m['fat'] as num).toDouble())).toList();
+  static Future<void> saveFavorite(Food f) async {await (await db).insert('favorites',{'name':f.name,'grams':f.grams,'kcal_per_100g':f.kcal,'protein':f.protein,'carbs':f.carbs,'fat':f.fat});}
+  static Future<void> removeFavorite(int id) async {await (await db).delete('favorites',where:'id=?',whereArgs:[id]);}
   static Future<void> delete(int id) async { await (await db).delete('food_entries',where:'id=?',whereArgs:[id]); }
   static Future<void> update(Food f) async { if(f.id==null) throw ArgumentError('Missing food id'); await (await db).update('food_entries',f.toMap(),where:'id=?',whereArgs:[f.id]); }
   static Future<int> water(String date) async { final rows=await (await db).query('water_entries',where:'day=?',whereArgs:[date]); return rows.isEmpty?0:rows.first['ml'] as int; }
@@ -76,6 +80,21 @@ class _HomeState extends State<Home> {
     ]))))));
     if(result!=null){try{if(existing==null){await Store.add(result);}else{await Store.update(result);}await reload();}catch(e){fail(e);}}
   }
+  Future<void> addFromSaved(Food food) async {
+    try {await Store.add(Food(name:food.name,meal:'Kahvaltı',date:day(selected),grams:food.grams,kcal:food.kcal,protein:food.protein,carbs:food.carbs,fat:food.fat));await reload();
+      if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('${food.name} eklendi')));
+    } catch(e){fail(e);}
+  }
+  Future<void> savedFoods() async {
+    final saved=await Store.favorites();
+    if(!mounted)return;
+    await showModalBottomSheet<void>(context:context,isScrollControlled:true,showDragHandle:true,builder:(sheet)=>SafeArea(child:Padding(padding:const EdgeInsets.all(16),child:Column(mainAxisSize:MainAxisSize.min,crossAxisAlignment:CrossAxisAlignment.start,children:[
+      Text('Favori besinler',style:Theme.of(sheet).textTheme.headlineSmall),
+      const SizedBox(height:12),
+      if(saved.isEmpty)const Padding(padding:EdgeInsets.all(20),child:Text('Henüz favori yok. Önce bir öğün kaydet, ardından kalp simgesine dokun.')),
+      Flexible(child:ListView(shrinkWrap:true,children:saved.map((f)=>ListTile(title:Text(f.name),subtitle:Text('${f.grams.toStringAsFixed(0)} g · ${f.energy.toStringAsFixed(0)} kcal'),trailing:IconButton(icon:const Icon(Icons.delete_outline),onPressed:()async{try{await Store.removeFavorite(f.id!);if(sheet.mounted)Navigator.pop(sheet);await savedFoods();}catch(e){fail(e);}}),onTap:()async{Navigator.pop(sheet);await addFromSaved(f);})).toList()))
+    ]))));
+  }
   Future<void> editGoals() async {
     final fields=[target,pt,ct,ft].map((n)=>TextEditingController(text:n.toStringAsFixed(0))).toList(),form=GlobalKey<FormState>();
     final ok=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(title:const Text('Günlük hedefler'),content:Form(key:form,child:SingleChildScrollView(child:Column(mainAxisSize:MainAxisSize.min,children:[number(fields[0],'Kalori (kcal)',positive:true),number(fields[1],'Protein (g)',positive:true),number(fields[2],'Karbonhidrat (g)',positive:true),number(fields[3],'Yağ (g)',positive:true)]))),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('İptal')),FilledButton(onPressed:(){if(form.currentState!.validate())Navigator.pop(ctx,true);},child:const Text('Kaydet'))]));
@@ -103,8 +122,8 @@ class _HomeState extends State<Home> {
             const Text('Günün öğünleri',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),Text('${today.length} kayıt · ${calories.toStringAsFixed(0)} kcal'),const SizedBox(height:12),
             SingleChildScrollView(scrollDirection:Axis.horizontal,child:Row(children:['Tümü',...meals].map((m)=>Padding(padding:const EdgeInsets.only(right:6),child:ChoiceChip(label:Text(m),selected:filter==m,onSelected:(_)=>setState(()=>filter=m)))).toList())),
             if(today.where((f)=>filter=='Tümü'||f.meal==filter).isEmpty)const Padding(padding:EdgeInsets.all(16),child:Text('Bu öğün için henüz kayıt yok.')),
-            ...today.where((f)=>filter=='Tümü'||f.meal==filter).map((f)=>ListTile(contentPadding:EdgeInsets.zero,title:Text(f.name),subtitle:Text('${f.meal} · ${f.grams.toStringAsFixed(0)} g · ${f.energy.toStringAsFixed(0)} kcal'),onTap:()=>addFood(f),trailing:PopupMenuButton<String>(tooltip:'Öğün işlemleri',onSelected:(action)async{if(action=='edit'){await addFood(f);}else{final confirmed=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(title:const Text('Öğün silinsin mi?'),content:Text('${f.name} kaydı silinecek.'),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('Vazgeç')),FilledButton(onPressed:()=>Navigator.pop(ctx,true),child:const Text('Sil'))]));if(confirmed==true){try{await Store.delete(f.id!);await reload();}catch(e){fail(e);}}}},itemBuilder:(_)=>const [PopupMenuItem(value:'edit',child:Text('Düzenle')),PopupMenuItem(value:'delete',child:Text('Sil'))]))),
-            FilledButton.icon(onPressed:()=>addFood(),icon:const Icon(Icons.add),label:const Text('Besin ekle'))])),
+            ...today.where((f)=>filter=='Tümü'||f.meal==filter).map((f)=>ListTile(contentPadding:EdgeInsets.zero,title:Text(f.name),subtitle:Text('${f.meal} · ${f.grams.toStringAsFixed(0)} g · ${f.energy.toStringAsFixed(0)} kcal'),onTap:()=>addFood(f),trailing:PopupMenuButton<String>(tooltip:'Öğün işlemleri',onSelected:(action)async{if(action=='edit'){await addFood(f);}else if(action=='favorite'){try{await Store.saveFavorite(f);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Favorilere eklendi')));}catch(e){fail(e);}}else{final confirmed=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(title:const Text('Öğün silinsin mi?'),content:Text('${f.name} kaydı silinecek.'),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('Vazgeç')),FilledButton(onPressed:()=>Navigator.pop(ctx,true),child:const Text('Sil'))]));if(confirmed==true){try{await Store.delete(f.id!);await reload();}catch(e){fail(e);}}}},itemBuilder:(_)=>const [PopupMenuItem(value:'edit',child:Text('Düzenle')),PopupMenuItem(value:'favorite',child:Text('Favorilere ekle')),PopupMenuItem(value:'delete',child:Text('Sil'))]))),
+            FilledButton.icon(onPressed:()=>addFood(),icon:const Icon(Icons.add),label:const Text('Besin ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:savedFoods,icon:const Icon(Icons.favorite_outline),label:const Text('Favorilerden ekle'))])),
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('Su takibi',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:12),meter('Günlük su',water.toDouble(),2000,'ml'),const SizedBox(height:12),Wrap(spacing:8,runSpacing:8,children:[...([100,250,500].map((ml)=>OutlinedButton(onPressed:()async{try{await Store.addWater(day(selected),ml);await reload();}catch(e){fail(e);}},child:Text('+$ml ml')))),OutlinedButton.icon(onPressed:water==0?null:()async{try{await Store.removeWater(day(selected),100);await reload();}catch(e){fail(e);}},icon:const Icon(Icons.remove),label:const Text('100 ml geri al'))])]))
         ]else if(tab==1)...[
           const Text('Son 7 günün kalori kayıtları'),const SizedBox(height:16),
