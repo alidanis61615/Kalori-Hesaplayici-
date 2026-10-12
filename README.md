@@ -78,20 +78,24 @@ Kayıtlar varsayılan olarak cihazdaki SQLite veritabanında tutulur; bulut eşi
 - Su hedefi örnek bir değerdir; kişiye özel sağlık önerisi değildir.
 - Android sürümleri ve farklı ekran boyutlarında ek testler yapılmalıdır.
 
-## Uygulamadan ekranlar
+## Uygulamadan ekran görüntüleri
 
-Gerçek cihazda alınmış ekran görüntüleri için hazırlanan galeri:
+Aşağıdaki görüntüler uygulamanın Android cihazda çalışan sürümünden alınmıştır. Görüntülerin üzerine basarak büyütebilirsiniz.
 
-| Ekran | Ne gösteriyor? |
-| --- | --- |
-| Gün Özeti | Günlük kalori ve makro hedefleri |
-| Öğün ve Su Takibi | Öğün ekleme, hazır besin, favoriler ve su miktarı |
-| Trendler | 7/30/90 günlük analiz ve su tüketimi grafiği |
-| Besin Ekleme | Porsiyon ve 100 gram üzerinden besin değerleri |
-| Raporlar | Günlük enerji, makrolar ve su hedefi özeti |
-| Profil | Kişisel hedefler ve JSON veri yedeği |
+<p align="center">
+<a href="Screenshot_20261012_185949.jpg"><img src="Screenshot_20261012_185949.jpg" alt="Gün özeti" width="230"></a>
+<a href="Screenshot_20261012_185953.jpg"><img src="Screenshot_20261012_185953.jpg" alt="Öğün işlemleri" width="230"></a>
+<a href="Screenshot_20261012_185955.jpg"><img src="Screenshot_20261012_185955.jpg" alt="Su takibi" width="230"></a>
+<a href="Screenshot_20261012_185959.jpg"><img src="Screenshot_20261012_185959.jpg" alt="Beslenme trendleri" width="230"></a>
+<a href="Screenshot_20261012_190002.jpg"><img src="Screenshot_20261012_190002.jpg" alt="Su tüketimi grafiği" width="230"></a>
+<a href="Screenshot_20261012_190006.jpg"><img src="Screenshot_20261012_190006.jpg" alt="Besin ekleme formu" width="230"></a>
+<a href="Screenshot_20261012_190013.jpg"><img src="Screenshot_20261012_190013.jpg" alt="Günlük raporlar" width="230"></a>
+<a href="Screenshot_20261012_190016.jpg"><img src="Screenshot_20261012_190016.jpg" alt="Profil ve veri yedeği" width="230"></a>
+</p>
 
-> **Not:** Ekran görüntüleri kullanıcı tarafından paylaşıldı ancak görsel dosyaları henüz depoya yüklenmedi. Dosyalar eklendiğinde tablo doğrudan görsellerle değiştirilecek. Örnek veriler gerçek tüketim verisi olarak sunulmaz.
+**Gösterilen ekranlar:** Gün özeti, öğün ekleme, su takibi, 7/30/90 günlük trendler, su grafiği, besin ekleme formu, günlük raporlar ve profil/veri yedeği.
+
+> **Demo notu:** Bazı ekranlarda henüz besin kaydı bulunmadığından sıfır değerler ve boş durum mesajları gösterilir. Görseller gerçek uygulama ekranlarıdır; temsili mockup değildir.
 
 ## Proje durumu
 Portföy geliştirmeleri test edilerek Pull Request #1 üzerinden `main` dalına birleştirildi. Uygulama Android cihazda manuel olarak da denendi. Ekran görüntüsü dosyalarının GitHub deposuna yüklenmesi henüz tamamlanmadı.
