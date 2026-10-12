@@ -243,6 +243,35 @@ class _HomeState extends State<Home> {
               const Text('Ortalamalar yalnızca öğün kaydı olan günlerden hesaplanır. Eksik kayıtlar gerçek tüketimi yansıtmayabilir.')
             ]));
           }),
+          if(weights.length>=2)card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+            const Text('Kilo değişim grafiği',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
+            const SizedBox(height:6),
+            const Text('Son 10 ölçüm · soldan sağa eski → yeni'),
+            const SizedBox(height:14),
+            SizedBox(height:160,child:Builder(builder:(context){
+              final points=weights.take(10).toList().reversed.toList();
+              final minKg=points.map((w)=>w.kg).reduce((a,b)=>a<b?a:b);
+              final maxKg=points.map((w)=>w.kg).reduce((a,b)=>a>b?a:b);
+              final range=(maxKg-minKg).abs()<0.1?1.0:maxKg-minKg;
+              return Row(crossAxisAlignment:CrossAxisAlignment.end,children:points.map((w){
+                final height=((w.kg-minKg)/range*0.7+0.2).clamp(0.0,1.0);
+                return Expanded(child:Padding(padding:const EdgeInsets.symmetric(horizontal:3),
+                  child:Column(mainAxisAlignment:MainAxisAlignment.end,children:[
+                    Text(w.kg.toStringAsFixed(1),style:const TextStyle(fontSize:10),maxLines:1),
+                    const SizedBox(height:4),
+                    SizedBox(height:110,child:Align(alignment:Alignment.bottomCenter,
+                      child:FractionallySizedBox(heightFactor:height,
+                        child:Container(decoration:const BoxDecoration(color:green,
+                          borderRadius:BorderRadius.vertical(top:Radius.circular(6)))))),
+                    const SizedBox(height:6),
+                    Text(w.date.substring(5),style:const TextStyle(fontSize:9),maxLines:1),
+                  ])));
+              }).toList());
+            })),
+            const SizedBox(height:8),
+            const Text('Çubuklar en düşük ve en yüksek ölçüm arasında ölçeklenir.',
+              style:TextStyle(fontSize:12)),
+          ])),
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
             Row(children:[const Expanded(child:Text('Kilo kayıtları',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold))),
               IconButton(tooltip:'Kilo ekle',onPressed:addWeightRecord,icon:const Icon(Icons.add_circle_outline))]),
