@@ -272,7 +272,7 @@ class _HomeState extends State<Home> {
                     SizedBox(height:110,child:Align(alignment:Alignment.bottomCenter,
                       child:FractionallySizedBox(heightFactor:height,
                         child:Container(decoration:const BoxDecoration(color:green,
-                          borderRadius:BorderRadius.vertical(top:Radius.circular(6)))))),
+                          borderRadius:BorderRadius.vertical(top:Radius.circular(6))))))),
                     const SizedBox(height:6),
                     Text(w.date.substring(5),style:const TextStyle(fontSize:9),maxLines:1),
                   ])));
