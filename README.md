@@ -1,15 +1,15 @@
 # PaketKap | Flutter & Dart
 
-**PaketKap**, Türkçe arayüzlü, çevrimdışı çalışan Android kalori ve beslenme takip uygulamasıdır. Paket teslimatı uygulaması değildir. Flutter, Dart, Material 3 ve SQLite ile geliştirilmiştir.
+**PaketKap**, Türkçe arayüzlü, çevrimdışı çalışan Android kalori ve beslenme takip uygulamasıdır. Flutter, Dart, Material 3 ve SQLite ile geliştirilmiştir.
 
 ## Özellikler
 - **Gün özeti:** Kalori, protein, karbonhidrat ve yağ hedefleri; kalan kalori bilgisi.
 - **Öğün takibi:** Besin ekleme, düzenleme, silme; kahvaltı/öğle/akşam/atıştırmalık kategorileri.
 - **Besin kataloğu ve favoriler:** Örnek besinlerden hızlı ekleme; gram ve 100 gramlık değerleri düzenleme.
 - **Su takibi:** Günlük içilen suyu kaydetme.
-- **Trendler:** 7/30/90 günlük beslenme ortalamaları, son 7 gün kalori grafiği, kilo ölçümleri ve kilo grafiği.
-- **Raporlar:** Günlük ve haftalık özetler.
-- **Profil:** Kalori ve makro hedeflerini düzenleme.
+- **Trendler:** 7/30/90 günlük beslenme ortalamaları, son 7 gün kalori ve su grafikleri, su istatistikleri, kilo ölçümleri ve kilo grafiği.
+- **Raporlar:** Günlük ve haftalık özetler, su hedefi ilerlemesi ve hedefe yakın günler.
+- **Profil:** Kalori, makro ve günlük su hedeflerini düzenleme.
 - **Yerel yedek:** Besin, su, kilo, favori ve hedefleri JSON biçiminde panoya kopyalama; panodan geri yükleme. Geri yükleme mevcut kayıtların **tamamını değiştirir** ve onay ister.
 
 Besin değerleri elle girilir; katalogdaki değerler yaklaşık örneklerdir. Uygulama tıbbi tavsiye sunmaz.
@@ -18,6 +18,14 @@ Besin değerleri elle girilir; katalogdaki değerler yaklaşık örneklerdir. Uy
 - Flutter / Dart / Material 3
 - SQLite (`sqflite`) ve `path`
 - Flutter testleri ve GitHub Actions (analiz, test, debug APK)
+
+## Portföyde öne çıkan teknik noktalar
+- Günlük verileri SQLite ile kalıcı saklama ve veritabanı sürüm geçişleri.
+- Besinlerin enerji ve makro hesaplamalarını porsiyon gramına göre yapma.
+- JSON yedek içeriğini kontrol edip geri yüklemeyi veritabanı işlemi (transaction) içinde gerçekleştirme.
+- GitHub Actions ile statik analiz, otomatik test ve Android debug APK üretimi.
+
+> **İsimlendirme notu:** Kullanıcıya görünen marka adı PaketKap'tır. GitHub depo URL'si ve Flutter proje kimliği geçmiş sürümlerle uyumluluk için şimdilik eski adını korur.
 
 ## Yerelde çalıştırma
 Flutter SDK ve Android geliştirme araçları gerekir.
