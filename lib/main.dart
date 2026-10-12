@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'nutrition_trends.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
@@ -54,7 +55,7 @@ class CalorieApp extends StatelessWidget {
 }
 class Home extends StatefulWidget { const Home({super.key}); @override State<Home> createState()=>_HomeState(); }
 class _HomeState extends State<Home> {
-  List<Food> foods=[]; DateTime selected=DateTime.now(); int tab=0,water=0;
+  List<Food> foods=[]; DateTime selected=DateTime.now(); int tab=0,water=0,trendDays=30;
   double target=2200,pt=120,ct=260,ft=70; String filter='Tümü'; String? error;
   final meals=['Kahvaltı','Öğle','Akşam','Atıştırmalık','Diğer'];
   @override void initState(){super.initState();reload();}
@@ -173,8 +174,38 @@ class _HomeState extends State<Home> {
             FilledButton.icon(onPressed:()=>addFood(),icon:const Icon(Icons.add),label:const Text('Besin ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:searchCatalog,icon:const Icon(Icons.search),label:const Text('Hazır besin ara')),const SizedBox(height:8),OutlinedButton.icon(onPressed:savedFoods,icon:const Icon(Icons.favorite_outline),label:const Text('Favorilerden ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:copyMealsToTomorrow,icon:const Icon(Icons.event_note_outlined),label:const Text('Öğünleri yarına kopyala'))])),
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('Su takibi',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:12),meter('Günlük su',water.toDouble(),2000,'ml'),const SizedBox(height:12),Wrap(spacing:8,runSpacing:8,children:[...([100,250,500].map((ml)=>OutlinedButton(onPressed:()async{try{await Store.addWater(day(selected),ml);await reload();}catch(e){fail(e);}},child:Text('+$ml ml')))),OutlinedButton.icon(onPressed:water==0?null:()async{try{await Store.removeWater(day(selected),100);await reload();}catch(e){fail(e);}},icon:const Icon(Icons.remove),label:const Text('100 ml geri al'))])]))
         ]else if(tab==1)...[
-          const Text('Son 7 günün kalori kayıtları'),const SizedBox(height:16),
-          ...List.generate(7,(i){final d=DateTime.now().subtract(Duration(days:6-i)),total=foods.where((f)=>f.date==day(d)).fold<double>(0,(s,f)=>s+f.energy);return card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(day(d)),const SizedBox(height:8),meter('Kalori',total,target,'kcal'),const SizedBox(height:6),Text(total==0?'Kayıt yok':total>target?'Hedefin üzerinde': 'Hedefin altında',style:const TextStyle(color:green))]));}),
+          const Text('Değişimi birlikte takip et',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
+          const Text('Kaydettiğin beslenme düzeni ve günlük ortalamalar.'),
+          const SizedBox(height:16),
+          Wrap(spacing:8,children:[7,30,90].map((n)=>ChoiceChip(label:Text('$n gün'),selected:trendDays==n,onSelected:(_)=>setState(()=>trendDays=n))).toList()),
+          Builder(builder:(context){
+            final entries=foods.map((f)=>DailyNutrition(
+              date:DateTime.parse(f.date),calories:f.energy,protein:f.p,carbs:f.c,fat:f.f));
+            final summary=summarizeNutrition(entries,end:DateTime.now(),days:trendDays);
+            return card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+              const Text('Beslenme trendi',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
+              const SizedBox(height:8),
+              Text('${summary.recordedDays}/$trendDays gün kayıtlı'),
+              const SizedBox(height:16),
+              if(summary.recordedDays==0)
+                const Text('Bu dönemde kayıt yok. Öğün ekledikçe ortalamaların burada görünür.')
+              else ...[
+                Text('Kayıtlı gün ortalaması: ${summary.averageCalories.toStringAsFixed(0)} kcal',
+                  style:const TextStyle(fontSize:19,fontWeight:FontWeight.w600)),
+                const SizedBox(height:12),
+                Text('Protein: ${summary.averageProtein.toStringAsFixed(1)} g'),
+                Text('Karbonhidrat: ${summary.averageCarbs.toStringAsFixed(1)} g'),
+                Text('Yağ: ${summary.averageFat.toStringAsFixed(1)} g'),
+                const SizedBox(height:12),
+                meter('Ortalama enerji',summary.averageCalories,target,'kcal'),
+              ],
+              const SizedBox(height:16),
+              const Text('Ortalamalar yalnızca öğün kaydı olan günlerden hesaplanır. Eksik kayıtlar gerçek tüketimi yansıtmayabilir.')
+            ]));
+          }),
+          const Text('Son 7 günün kalori kayıtları',style:TextStyle(fontSize:18,fontWeight:FontWeight.w600)),
+          const SizedBox(height:12),
+          ...List.generate(7,(i){final d=DateTime.now().subtract(Duration(days:6-i)),group=foods.where((f)=>f.date==day(d)).toList(),total=group.fold<double>(0,(s,f)=>s+f.energy);return card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(day(d)),const SizedBox(height:8),meter('Kalori',total,target,'kcal'),const SizedBox(height:6),Text(group.isEmpty?'Kayıt yok':total>target?'Hedefin üzerinde':'Hedefin altında',style:const TextStyle(color:green))]));}),
           const Text('Grafikler yalnızca kaydedilen öğünleri yansıtır.')
         ]else if(tab==3)...[
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
