@@ -385,7 +385,17 @@ class _HomeState extends State<Home> {
             Text('Protein: ${protein.toStringAsFixed(1)} g'),
             Text('Karbonhidrat: ${carbs.toStringAsFixed(1)} g'),
             Text('Yağ: ${fat.toStringAsFixed(1)} g'),
-            Text('Su: $water ml'),const Divider(height:28),
+            Text('Su: $water / ${waterGoal.toStringAsFixed(0)} ml'),
+            const SizedBox(height:8),
+            LinearProgressIndicator(value:waterGoal>0?(water/waterGoal).clamp(0.0,1.0):0,
+              minHeight:9,borderRadius:BorderRadius.circular(8),
+              backgroundColor:const Color(0xFFE8EEEC)),
+            const SizedBox(height:6),
+            Text(waterGoal>water?'${(waterGoal-water).toStringAsFixed(0)} ml hedefe kaldı':
+              waterGoal==water?'Günlük su hedefi tamamlandı':
+              '${(water-waterGoal).toStringAsFixed(0)} ml hedefin üzerinde',
+              style:const TextStyle(fontWeight:FontWeight.w600)),
+            const Divider(height:28),
             ...meals.map((m){final group=today.where((f)=>f.meal==m).toList();final sum=group.fold<double>(0,(a,f)=>a+f.energy);return Padding(padding:const EdgeInsets.symmetric(vertical:5),child:Text('$m: ${group.length} kayıt · ${sum.toStringAsFixed(0)} kcal'));}),
             const SizedBox(height:8),const Text('Bu rapor yalnızca manuel kaydedilen öğün ve su verilerini içerir.')
           ])),
