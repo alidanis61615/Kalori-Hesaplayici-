@@ -274,6 +274,38 @@ class _HomeState extends State<Home> {
             ...meals.map((m){final group=today.where((f)=>f.meal==m).toList();final sum=group.fold<double>(0,(a,f)=>a+f.energy);return Padding(padding:const EdgeInsets.symmetric(vertical:5),child:Text('$m: ${group.length} kayıt · ${sum.toStringAsFixed(0)} kcal'));}),
             const SizedBox(height:8),const Text('Bu rapor yalnızca manuel kaydedilen öğün ve su verilerini içerir.')
           ])),
+          Builder(builder:(context){
+            final records=foods.map((f)=>DailyNutrition(date:DateTime.parse(f.date),
+              calories:f.energy,protein:f.p,carbs:f.c,fat:f.f));
+            final weekly=summarizeNutrition(records,end:selected,days:7);
+            final monthly=summarizeNutrition(records,end:selected,days:30);
+            return card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+              const Text('Beslenme özeti',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
+              const SizedBox(height:12),
+              Text('Son 7 gün: ${weekly.recordedDays} kayıtlı gün'),
+              Text('Ortalama enerji: ${weekly.averageCalories.toStringAsFixed(0)} kcal'),
+              Text('Ortalama protein: ${weekly.averageProtein.toStringAsFixed(1)} g'),
+              const Divider(height:24),
+              Text('Son 30 gün: ${monthly.recordedDays} kayıtlı gün'),
+              Text('Ortalama enerji: ${monthly.averageCalories.toStringAsFixed(0)} kcal'),
+              Text('Ortalama karbonhidrat: ${monthly.averageCarbs.toStringAsFixed(1)} g'),
+              Text('Ortalama yağ: ${monthly.averageFat.toStringAsFixed(1)} g'),
+              const SizedBox(height:10),
+              const Text('Ortalamalar yalnızca öğün kaydı bulunan günleri içerir.'),
+            ]));
+          }),
+          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+            const Text('Kilo ölçüm özeti',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
+            const SizedBox(height:12),
+            if(weights.isEmpty)const Text('Henüz kilo kaydı bulunmuyor.')
+            else ...[
+              Text('Son ölçüm: ${weights.first.kg.toStringAsFixed(1)} kg (${weights.first.date})'),
+              if(weights.length>1)Text('İlk kayda göre değişim: ${(weights.first.kg-weights.last.kg).toStringAsFixed(1)} kg'),
+              Text('Toplam ölçüm: ${weights.length}'),
+            ],
+            const SizedBox(height:8),
+            const Text('Bu değerler manuel kayıtlardır; tıbbi değerlendirme değildir.'),
+          ])),
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
             const Text('Son 7 gün',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
             const SizedBox(height:12),
