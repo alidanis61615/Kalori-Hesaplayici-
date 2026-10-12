@@ -20,7 +20,10 @@ jobs:
           channel: stable
           cache: true
       - name: Generate Android project files
-        run: flutter create --platforms=android --project-name kalori_hesaplayici .
+        run: |
+          flutter create --platforms=android --project-name kalori_hesaplayici .
+          # flutter create may add a default MyApp test, but this app uses CalorieApp.
+          rm -f test/widget_test.dart
       - name: Install dependencies
         run: flutter pub get
       - name: Analyze
