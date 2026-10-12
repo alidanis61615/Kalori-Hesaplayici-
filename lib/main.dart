@@ -18,23 +18,41 @@ class Food {
   factory Food.fromMap(Map<String,Object?> m) => Food(id:m['id'] as int,name:m['name'] as String,meal:m['meal'] as String,date:m['created_at'] as String,grams:(m['grams'] as num).toDouble(),kcal:(m['kcal_per_100g'] as num).toDouble(),protein:(m['protein'] as num).toDouble(),carbs:(m['carbs'] as num).toDouble(),fat:(m['fat'] as num).toDouble());
 }
 String day(DateTime d) => '${d.year}-${d.month.toString().padLeft(2,'0')}-${d.day.toString().padLeft(2,'0')}';
+class WeightRecord {
+  final int id;
+  final String date;
+  final double kg;
+  const WeightRecord({required this.id,required this.date,required this.kg});
+}
 class Store {
   static Database? _db;
   static Future<Database> get db async {
     if (_db != null) return _db!;
-    _db = await openDatabase(p.join(await getDatabasesPath(),'calorie_tracker.db'),version:3,
+    _db = await openDatabase(p.join(await getDatabasesPath(),'calorie_tracker.db'),version:4,
       onCreate:(d,v) async {
         await d.execute('CREATE TABLE food_entries (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,grams REAL NOT NULL,kcal_per_100g REAL NOT NULL,created_at TEXT NOT NULL,meal TEXT NOT NULL DEFAULT "Diğer",protein REAL NOT NULL DEFAULT 0,carbs REAL NOT NULL DEFAULT 0,fat REAL NOT NULL DEFAULT 0)');
         await d.execute('CREATE TABLE water_entries (day TEXT PRIMARY KEY,ml INTEGER NOT NULL)');
         await d.execute('CREATE TABLE settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)');
         await d.execute('CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,grams REAL NOT NULL,kcal_per_100g REAL NOT NULL,protein REAL NOT NULL,carbs REAL NOT NULL,fat REAL NOT NULL)');
+        await d.execute('CREATE TABLE weight_entries (id INTEGER PRIMARY KEY AUTOINCREMENT,day TEXT NOT NULL,kg REAL NOT NULL CHECK(kg>0))');
       },
       onUpgrade:(d,old,v) async { if(old<2) {
         for(final col in ['meal TEXT NOT NULL DEFAULT "Diğer"','protein REAL NOT NULL DEFAULT 0','carbs REAL NOT NULL DEFAULT 0','fat REAL NOT NULL DEFAULT 0']) { await d.execute('ALTER TABLE food_entries ADD COLUMN $col'); }
         await d.execute('CREATE TABLE water_entries (day TEXT PRIMARY KEY,ml INTEGER NOT NULL)');
         await d.execute('CREATE TABLE settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)');
-      } if(old<3){await d.execute('CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,grams REAL NOT NULL,kcal_per_100g REAL NOT NULL,protein REAL NOT NULL,carbs REAL NOT NULL,fat REAL NOT NULL)');}});
+      } if(old<3){await d.execute('CREATE TABLE favorites (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT NOT NULL,grams REAL NOT NULL,kcal_per_100g REAL NOT NULL,protein REAL NOT NULL,carbs REAL NOT NULL,fat REAL NOT NULL)');} if(old<4){await d.execute('CREATE TABLE weight_entries (id INTEGER PRIMARY KEY AUTOINCREMENT,day TEXT NOT NULL,kg REAL NOT NULL CHECK(kg>0))');}});
     return _db!;
+  }
+  static Future<List<WeightRecord>> weights() async {
+    final rows=await (await db).query('weight_entries',orderBy:'day DESC,id DESC');
+    return rows.map((r)=>WeightRecord(id:r['id'] as int,date:r['day'] as String,kg:(r['kg'] as num).toDouble())).toList();
+  }
+  static Future<void> addWeight(String date,double kg) async {
+    if(!kg.isFinite || kg<=0 || kg>500)throw ArgumentError('Geçerli bir kilo girin');
+    await (await db).insert('weight_entries',{'day':date,'kg':kg});
+  }
+  static Future<void> deleteWeight(int id) async {
+    await (await db).delete('weight_entries',where:'id=?',whereArgs:[id]);
   }
   static Future<List<Food>> foods() async => (await (await db).query('food_entries',orderBy:'created_at DESC,id DESC')).map(Food.fromMap).toList();
   static Future<void> add(Food f) async { await (await db).insert('food_entries',f.toMap()); }
@@ -55,14 +73,14 @@ class CalorieApp extends StatelessWidget {
 }
 class Home extends StatefulWidget { const Home({super.key}); @override State<Home> createState()=>_HomeState(); }
 class _HomeState extends State<Home> {
-  List<Food> foods=[]; DateTime selected=DateTime.now(); int tab=0,water=0,trendDays=30;
+  List<Food> foods=[]; List<WeightRecord> weights=[]; DateTime selected=DateTime.now(); int tab=0,water=0,trendDays=30;
   double target=2200,pt=120,ct=260,ft=70; String filter='Tümü'; String? error;
   final meals=['Kahvaltı','Öğle','Akşam','Atıştırmalık','Diğer'];
   @override void initState(){super.initState();reload();}
   Future<void> reload() async {try {
-    final f=await Store.foods(), w=await Store.water(day(selected));
+    final f=await Store.foods(), w=await Store.water(day(selected)), weightRecords=await Store.weights();
     final settings=await Future.wait(['calories','protein','carbs','fat'].map(Store.getSetting));
-    if(mounted)setState((){foods=f;water=w;target=double.tryParse(settings[0]??'')??2200;pt=double.tryParse(settings[1]??'')??120;ct=double.tryParse(settings[2]??'')??260;ft=double.tryParse(settings[3]??'')??70;error=null;});
+    if(mounted)setState((){foods=f;weights=weightRecords;water=w;target=double.tryParse(settings[0]??'')??2200;pt=double.tryParse(settings[1]??'')??120;ct=double.tryParse(settings[2]??'')??260;ft=double.tryParse(settings[3]??'')??70;error=null;});
   }catch(e){if(mounted)setState(()=>error='Veriler yüklenemedi: $e');}}
   void fail(Object e){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('İşlem başarısız: $e')));}
   Widget card(Widget child)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.only(bottom:16),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(24),side:const BorderSide(color:Color(0xFFE0E5E2))),child:Padding(padding:const EdgeInsets.all(20),child:child));
@@ -143,6 +161,23 @@ class _HomeState extends State<Home> {
       if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('${current.length} öğün yarına kopyalandı.')));
     }catch(e){fail(e);}
   }
+  Future<void> addWeightRecord() async {
+    final controller=TextEditingController();
+    final form=GlobalKey<FormState>();
+    final kg=await showDialog<double>(context:context,builder:(ctx)=>AlertDialog(
+      title:const Text('Kilo kaydı ekle'),
+      content:Form(key:form,child:TextFormField(
+        controller:controller,autofocus:true,
+        keyboardType:const TextInputType.numberWithOptions(decimal:true),
+        decoration:const InputDecoration(labelText:'Kilo (kg)',hintText:'78,5'),
+        validator:(value){final n=double.tryParse((value??'').replaceAll(',','.'));return n==null||!n.isFinite||n<=0||n>500?'1–500 kg arasında değer girin':null;},
+      )),
+      actions:[TextButton(onPressed:()=>Navigator.pop(ctx),child:const Text('İptal')),
+        FilledButton(onPressed:(){if(form.currentState!.validate())Navigator.pop(ctx,double.parse(controller.text.replaceAll(',','.')));},child:const Text('Kaydet'))],
+    ));
+    if(kg!=null){try{await Store.addWeight(day(selected),kg);await reload();}catch(e){fail(e);}}
+    controller.dispose();
+  }
   Future<void> editGoals() async {
     final fields=[target,pt,ct,ft].map((n)=>TextEditingController(text:n.toStringAsFixed(0))).toList(),form=GlobalKey<FormState>();
     final ok=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(title:const Text('Günlük hedefler'),content:Form(key:form,child:SingleChildScrollView(child:Column(mainAxisSize:MainAxisSize.min,children:[number(fields[0],'Kalori (kcal)',positive:true),number(fields[1],'Protein (g)',positive:true),number(fields[2],'Karbonhidrat (g)',positive:true),number(fields[3],'Yağ (g)',positive:true)]))),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('İptal')),FilledButton(onPressed:(){if(form.currentState!.validate())Navigator.pop(ctx,true);},child:const Text('Kaydet'))]));
@@ -203,6 +238,26 @@ class _HomeState extends State<Home> {
               const Text('Ortalamalar yalnızca öğün kaydı olan günlerden hesaplanır. Eksik kayıtlar gerçek tüketimi yansıtmayabilir.')
             ]));
           }),
+          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+            Row(children:[const Expanded(child:Text('Kilo kayıtları',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold))),
+              IconButton(tooltip:'Kilo ekle',onPressed:addWeightRecord,icon:const Icon(Icons.add_circle_outline))]),
+            if(weights.isEmpty)const Padding(padding:EdgeInsets.symmetric(vertical:12),child:Text('Henüz kilo ölçümü yok. İlk ölçümünü ekle.'))
+            else ...[
+              Text('Son ölçüm: ${weights.first.kg.toStringAsFixed(1)} kg'),
+              if(weights.length>=2)Text('Önceki ölçüme göre: ${(weights.first.kg-weights[1].kg).toStringAsFixed(1)} kg'),
+              const SizedBox(height:8),
+              ...weights.take(5).map((w)=>ListTile(
+                contentPadding:EdgeInsets.zero,title:Text('${w.kg.toStringAsFixed(1)} kg'),subtitle:Text(w.date),
+                trailing:IconButton(tooltip:'Kaydı sil',icon:const Icon(Icons.delete_outline),onPressed:()async{
+                  final ok=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(
+                    title:const Text('Kilo kaydını sil?'),content:Text('${w.date} tarihli ölçüm silinecek.'),
+                    actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('Vazgeç')),
+                      FilledButton(onPressed:()=>Navigator.pop(ctx,true),child:const Text('Sil'))]));
+                  if(ok==true){try{await Store.deleteWeight(w.id);await reload();}catch(e){fail(e);}}
+                }),
+              )),
+            ],
+          ])),
           const Text('Son 7 günün kalori kayıtları',style:TextStyle(fontSize:18,fontWeight:FontWeight.w600)),
           const SizedBox(height:12),
           ...List.generate(7,(i){final d=DateTime.now().subtract(Duration(days:6-i)),group=foods.where((f)=>f.date==day(d)).toList(),total=group.fold<double>(0,(s,f)=>s+f.energy);return card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(day(d)),const SizedBox(height:8),meter('Kalori',total,target,'kcal'),const SizedBox(height:6),Text(group.isEmpty?'Kayıt yok':total>target?'Hedefin üzerinde':'Hedefin altında',style:const TextStyle(color:green))]));}),
