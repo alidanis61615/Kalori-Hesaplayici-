@@ -83,8 +83,8 @@ class _HomeState extends State<Home> {
     if(mounted)setState((){foods=f;weights=weightRecords;water=w;target=double.tryParse(settings[0]??'')??2200;pt=double.tryParse(settings[1]??'')??120;ct=double.tryParse(settings[2]??'')??260;ft=double.tryParse(settings[3]??'')??70;error=null;});
   }catch(e){if(mounted)setState(()=>error='Veriler yüklenemedi: $e');}}
   void fail(Object e){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('İşlem başarısız: $e')));}
-  Widget card(Widget child)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.only(bottom:16),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(24),side:const BorderSide(color:Color(0xFFE0E5E2))),child:Padding(padding:const EdgeInsets.all(20),child:child));
-  Widget meter(String title,double value,double goal,String unit)=>Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(title),Text('${value.toStringAsFixed(0)} / ${goal.toStringAsFixed(0)} $unit'),const SizedBox(height:8),LinearProgressIndicator(value:goal>0?(value/goal).clamp(0.0,1.0):0,minHeight:8,borderRadius:BorderRadius.circular(8),backgroundColor:const Color(0xFFE8EEEC))]);
+  Widget card(Widget child)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.only(bottom:12),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(24),side:const BorderSide(color:Color(0xFFE0E5E2))),child:Padding(padding:const EdgeInsets.all(16),child:child));
+  Widget meter(String title,double value,double goal,String unit)=>Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,children:[Text(title,style:const TextStyle(fontWeight:FontWeight.w600)),Text('${value.toStringAsFixed(0)} / ${goal.toStringAsFixed(0)} $unit',style:const TextStyle(fontSize:12))]),const SizedBox(height:7),LinearProgressIndicator(value:goal>0?(value/goal).clamp(0.0,1.0):0,minHeight:7,borderRadius:BorderRadius.circular(8),backgroundColor:const Color(0xFFE8EEEC))]);
   Widget number(TextEditingController c,String label,{bool positive=false})=>TextFormField(controller:c,keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:label),validator:(v){final n=double.tryParse((v??'').replaceAll(',','.'));return n==null||!n.isFinite||(positive?n<=0:n<0)?'Geçerli değer girin':null;});
   Future<void> addFood([Food? existing]) async {
     final name=TextEditingController(text:existing?.name??''),grams=TextEditingController(text:existing?.grams.toString()??''),kcal=TextEditingController(text:existing?.kcal.toString()??''),protein=TextEditingController(text:existing?.protein.toString()??'0'),carbs=TextEditingController(text:existing?.carbs.toString()??'0'),fat=TextEditingController(text:existing?.fat.toString()??'0');
@@ -204,8 +204,8 @@ class _HomeState extends State<Home> {
             const SizedBox(height:8),
             Text(target>calories?'${(target-calories).toStringAsFixed(0)} kcal hedefe kaldı':'${(calories-target).toStringAsFixed(0)} kcal hedefin üzerinde',
               style:TextStyle(color:calories>target?Colors.deepOrange:green,fontWeight:FontWeight.w600)),
-            const SizedBox(height:14),meter('Kalori',calories,target,'kcal'),const Divider(height:30),
-            meter('Protein',protein,pt,'g'),const SizedBox(height:14),meter('Karbonhidrat',carbs,ct,'g'),const SizedBox(height:14),meter('Yağ',fat,ft,'g')])),
+            const SizedBox(height:12),meter('Kalori',calories,target,'kcal'),const Divider(height:22),
+            meter('Protein',protein,pt,'g'),const SizedBox(height:12),meter('Karbonhidrat',carbs,ct,'g'),const SizedBox(height:12),meter('Yağ',fat,ft,'g')])),
           card(Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
             const Text('Günün öğünleri',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),Text('${today.length} kayıt · ${calories.toStringAsFixed(0)} kcal'),const SizedBox(height:12),
             SingleChildScrollView(scrollDirection:Axis.horizontal,child:Row(children:['Tümü',...meals].map((m)=>Padding(padding:const EdgeInsets.only(right:6),child:ChoiceChip(label:Text(m),selected:filter==m,onSelected:(_)=>setState(()=>filter=m)))).toList())),
