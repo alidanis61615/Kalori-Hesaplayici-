@@ -8,6 +8,21 @@
 
 > **Portföy demosu:** Gün Özeti ekranında bir besin ekleyin; ardından su takibini ve Trendler ekranındaki 7 günlük grafikleri inceleyin. Uygulama internetsiz çalışır. Gerçek cihaz ekran görüntüleri henüz depoya eklenmedi.
 
+## Uygulama ekranları
+
+Gerçek Android cihazından alınan ekran görüntüleri, uygulamanın temel akışlarını gösterir. Görseller depoya eklendiğinde bu bölümde yan yana sergilenecektir.
+
+| Ekran | Gösterilen özellik |
+| --- | --- |
+| Gün Özeti | Günlük kalori ve makro hedefleri |
+| Öğün ve Su Takibi | Besin ekleme, favoriler, su miktarı düzenleme |
+| Trendler | 7/30/90 günlük dönemler, su tüketim grafiği ve kilo kayıtları |
+| Besin Ekleme | Porsiyon ve 100 g başına besin değeri girişi, form doğrulama |
+| Raporlar | Günlük kalori, makro, öğün ve su özeti |
+| Profil | Hedefleri düzenleme ve JSON veri yedeği |
+
+> **Görsel hazırlığı:** Bu bölüme ait gerçek cihaz ekran görüntüleri toplandı; GitHub deposuna görsel dosyaları henüz yüklenmedi. Yüklendiğinde galeri bağlantıları eklenecektir.
+
 ## Özellikler
 - **Gün özeti:** Kalori, protein, karbonhidrat ve yağ hedefleri; kalan kalori bilgisi.
 - **Öğün takibi:** Besin ekleme, düzenleme, silme; kahvaltı/öğle/akşam/atıştırmalık kategorileri.
