@@ -126,13 +126,13 @@ class CalorieApp extends StatelessWidget {
 class Home extends StatefulWidget { const Home({super.key}); @override State<Home> createState()=>_HomeState(); }
 class _HomeState extends State<Home> {
   List<Food> foods=[]; List<WeightRecord> weights=[]; DateTime selected=DateTime.now(); int tab=0,water=0,trendDays=30;
-  double target=2200,pt=120,ct=260,ft=70; String filter='Tümü'; String? error;
+  double target=2200,pt=120,ct=260,ft=70,waterGoal=2000; String filter='Tümü'; String? error;
   final meals=['Kahvaltı','Öğle','Akşam','Atıştırmalık','Diğer'];
   @override void initState(){super.initState();reload();}
   Future<void> reload() async {try {
     final f=await Store.foods(), w=await Store.water(day(selected)), weightRecords=await Store.weights();
-    final settings=await Future.wait(['calories','protein','carbs','fat'].map(Store.getSetting));
-    if(mounted)setState((){foods=f;weights=weightRecords;water=w;target=double.tryParse(settings[0]??'')??2200;pt=double.tryParse(settings[1]??'')??120;ct=double.tryParse(settings[2]??'')??260;ft=double.tryParse(settings[3]??'')??70;error=null;});
+    final settings=await Future.wait(['calories','protein','carbs','fat','water_goal'].map(Store.getSetting));
+    if(mounted)setState((){foods=f;weights=weightRecords;water=w;target=double.tryParse(settings[0]??'')??2200;pt=double.tryParse(settings[1]??'')??120;ct=double.tryParse(settings[2]??'')??260;ft=double.tryParse(settings[3]??'')??70;waterGoal=double.tryParse(settings[4]??'')??2000;error=null;});
   }catch(e){if(mounted)setState(()=>error='Veriler yüklenemedi: $e');}}
   void fail(Object e){if(mounted)ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('İşlem başarısız: $e')));}
   Widget card(Widget child)=>Card(color:Colors.white,elevation:0,margin:const EdgeInsets.only(bottom:12),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(24),side:const BorderSide(color:Color(0xFFE0E5E2))),child:Padding(padding:const EdgeInsets.all(16),child:child));
@@ -231,9 +231,9 @@ class _HomeState extends State<Home> {
     controller.dispose();
   }
   Future<void> editGoals() async {
-    final fields=[target,pt,ct,ft].map((n)=>TextEditingController(text:n.toStringAsFixed(0))).toList(),form=GlobalKey<FormState>();
-    final ok=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(title:const Text('Günlük hedefler'),content:Form(key:form,child:SingleChildScrollView(child:Column(mainAxisSize:MainAxisSize.min,children:[number(fields[0],'Kalori (kcal)',positive:true),number(fields[1],'Protein (g)',positive:true),number(fields[2],'Karbonhidrat (g)',positive:true),number(fields[3],'Yağ (g)',positive:true)]))),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('İptal')),FilledButton(onPressed:(){if(form.currentState!.validate())Navigator.pop(ctx,true);},child:const Text('Kaydet'))]));
-    if(ok==true){try{for(var i=0;i<4;i++){await Store.setSetting(['calories','protein','carbs','fat'][i],fields[i].text.replaceAll(',','.'));}await reload();}catch(e){fail(e);}}
+    final fields=[target,pt,ct,ft,waterGoal].map((n)=>TextEditingController(text:n.toStringAsFixed(0))).toList(),form=GlobalKey<FormState>();
+    final ok=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(title:const Text('Günlük hedefler'),content:Form(key:form,child:SingleChildScrollView(child:Column(mainAxisSize:MainAxisSize.min,children:[number(fields[0],'Kalori (kcal)',positive:true),number(fields[1],'Protein (g)',positive:true),number(fields[2],'Karbonhidrat (g)',positive:true),number(fields[3],'Yağ (g)',positive:true),number(fields[4],'Su hedefi (ml)',positive:true)]))),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('İptal')),FilledButton(onPressed:(){if(form.currentState!.validate())Navigator.pop(ctx,true);},child:const Text('Kaydet'))]));
+    if(ok==true){try{for(var i=0;i<5;i++){await Store.setSetting(['calories','protein','carbs','fat','water_goal'][i],fields[i].text.replaceAll(',','.'));}await reload();}catch(e){fail(e);}}
   }
   @override Widget build(BuildContext context){
     final today=foods.where((f)=>f.date==day(selected)).toList();
@@ -264,7 +264,7 @@ class _HomeState extends State<Home> {
             if(today.where((f)=>filter=='Tümü'||f.meal==filter).isEmpty)const Padding(padding:EdgeInsets.all(16),child:Text('Bu öğün için henüz kayıt yok.')),
             ...today.where((f)=>filter=='Tümü'||f.meal==filter).map((f)=>ListTile(contentPadding:EdgeInsets.zero,title:Text(f.name),subtitle:Text('${f.meal} · ${f.grams.toStringAsFixed(0)} g · ${f.energy.toStringAsFixed(0)} kcal'),onTap:()=>addFood(f),trailing:PopupMenuButton<String>(tooltip:'Öğün işlemleri',onSelected:(action)async{if(action=='edit'){await addFood(f);}else if(action=='favorite'){try{await Store.saveFavorite(f);if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Favorilere eklendi')));}catch(e){fail(e);}}else{if(!mounted)return;final confirmed=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(title:const Text('Öğün silinsin mi?'),content:Text('${f.name} kaydı silinecek.'),actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('Vazgeç')),FilledButton(onPressed:()=>Navigator.pop(ctx,true),child:const Text('Sil'))]));if(confirmed==true){try{await Store.delete(f.id!);await reload();}catch(e){fail(e);}}}},itemBuilder:(_)=>const [PopupMenuItem(value:'edit',child:Text('Düzenle')),PopupMenuItem(value:'favorite',child:Text('Favorilere ekle')),PopupMenuItem(value:'delete',child:Text('Sil'))]))),
             FilledButton.icon(onPressed:()=>addFood(),icon:const Icon(Icons.add),label:const Text('Besin ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:searchCatalog,icon:const Icon(Icons.search),label:const Text('Hazır besin ara')),const SizedBox(height:8),OutlinedButton.icon(onPressed:savedFoods,icon:const Icon(Icons.favorite_outline),label:const Text('Favorilerden ekle')),const SizedBox(height:8),OutlinedButton.icon(onPressed:copyMealsToTomorrow,icon:const Icon(Icons.event_note_outlined),label:const Text('Öğünleri yarına kopyala'))])),
-          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('Su takibi',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:12),meter('Günlük su',water.toDouble(),2000,'ml'),const SizedBox(height:12),Wrap(spacing:8,runSpacing:8,children:[...([100,250,500].map((ml)=>OutlinedButton(onPressed:()async{try{await Store.addWater(day(selected),ml);await reload();}catch(e){fail(e);}},child:Text('+$ml ml')))),OutlinedButton.icon(onPressed:water==0?null:()async{try{await Store.removeWater(day(selected),100);await reload();}catch(e){fail(e);}},icon:const Icon(Icons.remove),label:const Text('100 ml geri al'))])]))
+          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('Su takibi',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:12),meter('Günlük su',water.toDouble(),waterGoal,'ml'),const SizedBox(height:12),Wrap(spacing:8,runSpacing:8,children:[...([100,250,500].map((ml)=>OutlinedButton(onPressed:()async{try{await Store.addWater(day(selected),ml);await reload();}catch(e){fail(e);}},child:Text('+$ml ml')))),OutlinedButton.icon(onPressed:water==0?null:()async{try{await Store.removeWater(day(selected),100);await reload();}catch(e){fail(e);}},icon:const Icon(Icons.remove),label:const Text('100 ml geri al'))])]))
         ]else if(tab==1)...[
           const Text('Değişimi birlikte takip et',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
           const Text('Kaydettiğin beslenme düzeni ve günlük ortalamalar.'),
@@ -448,7 +448,7 @@ class _HomeState extends State<Home> {
             ...List.generate(7,(i){final d=DateTime.now().subtract(Duration(days:6-i));final group=foods.where((f)=>f.date==day(d)).toList();final total=group.fold<double>(0,(a,f)=>a+f.energy);return Padding(padding:const EdgeInsets.symmetric(vertical:5),child:Text('${day(d)} · ${group.length} öğün · ${total.toStringAsFixed(0)} kcal'));})
           ]))
         ]else if(tab==4)...[
-          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('Beslenme hedeflerin',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:12),Text('${target.toStringAsFixed(0)} kcal',style:const TextStyle(fontSize:30,fontWeight:FontWeight.bold)),Text('Protein ${pt.toStringAsFixed(0)} g'),Text('Karbonhidrat ${ct.toStringAsFixed(0)} g'),Text('Yağ ${ft.toStringAsFixed(0)} g'),const SizedBox(height:12),OutlinedButton.icon(onPressed:editGoals,icon:const Icon(Icons.edit),label:const Text('Hedefleri düzenle'))])),
+          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('Beslenme hedeflerin',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:12),Text('${target.toStringAsFixed(0)} kcal',style:const TextStyle(fontSize:30,fontWeight:FontWeight.bold)),Text('Protein ${pt.toStringAsFixed(0)} g'),Text('Karbonhidrat ${ct.toStringAsFixed(0)} g'),Text('Yağ ${ft.toStringAsFixed(0)} g'),Text('Su hedefi ${waterGoal.toStringAsFixed(0)} ml'),const SizedBox(height:12),OutlinedButton.icon(onPressed:editGoals,icon:const Icon(Icons.edit),label:const Text('Hedefleri düzenle'))])),
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
             const Text('Veri yedeği',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),
             const SizedBox(height:8),
