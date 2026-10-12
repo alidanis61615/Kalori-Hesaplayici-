@@ -95,9 +95,9 @@ class _HomeState extends State<Home> {
       DropdownButtonFormField<String>(initialValue:meal,decoration:const InputDecoration(labelText:'Öğün'),items:meals.map((m)=>DropdownMenuItem(value:m,child:Text(m))).toList(),onChanged:(v){if(v!=null)update(()=>meal=v);}),
       TextFormField(controller:name,decoration:const InputDecoration(labelText:'Yiyecek adı'),validator:(v)=>v==null||v.trim().isEmpty?'Yiyecek adı gerekli':null),
       number(grams,'Porsiyon (gram)',positive:true),number(kcal,'Kalori (kcal / 100 g)'),number(protein,'Protein (g / 100 g)'),number(carbs,'Karbonhidrat (g / 100 g)'),number(fat,'Yağ (g / 100 g)'),
-      const SizedBox(height:16),FilledButton(onPressed:(){if(!form.currentState!.validate())return;double val(TextEditingController c)=>double.parse(c.text.replaceAll(',','.'));Navigator.pop(sheet,Food(id:existing?.id,name:name.text.trim(),meal:meal,date:existing?.date??day(selected),grams:val(grams),kcal:val(kcal),protein:val(protein),carbs:val(carbs),fat:val(fat)));},child:const Text('Kaydet'))
+      const SizedBox(height:16),FilledButton(onPressed:(){if(!form.currentState!.validate())return;double val(TextEditingController c)=>double.parse(c.text.replaceAll(',','.'));Navigator.pop(sheet,Food(id:existing?.id,name:name.text.trim(),meal:meal,date:existing?.id==null?day(selected):existing!.date,grams:val(grams),kcal:val(kcal),protein:val(protein),carbs:val(carbs),fat:val(fat)));},child:const Text('Kaydet'))
     ]))))));
-    if(result!=null){try{if(existing==null){await Store.add(result);}else{await Store.update(result);}await reload();}catch(e){fail(e);}}
+    if(result!=null){try{if(result.id==null){await Store.add(result);}else{await Store.update(result);}await reload();}catch(e){fail(e);}}
   }
   Future<void> searchCatalog() async {
     // Approximate sample values per 100 g; users can edit values before saving.
