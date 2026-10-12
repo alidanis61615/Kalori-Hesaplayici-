@@ -122,7 +122,7 @@ class Store {
 }
 class CalorieApp extends StatelessWidget {
   const CalorieApp({super.key});
-  @override Widget build(BuildContext context) => MaterialApp(title:'Kalori Hesaplayıcı',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:const Color(0xFFF5F7F5),colorScheme:ColorScheme.fromSeed(seedColor:green)),home:const Home());
+  @override Widget build(BuildContext context) => MaterialApp(title:'PaketKap',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:const Color(0xFFF5F7F5),colorScheme:ColorScheme.fromSeed(seedColor:green)),home:const Home());
 }
 class Home extends StatefulWidget { const Home({super.key}); @override State<Home> createState()=>_HomeState(); }
 class _HomeState extends State<Home> {
