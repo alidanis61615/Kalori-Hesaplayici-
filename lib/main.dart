@@ -263,6 +263,35 @@ class _HomeState extends State<Home> {
               )),
             ],
           ])),
+          card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+            const Text('Haftalık kalori grafiği',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold)),
+            const SizedBox(height:6),
+            const Text('Son 7 gün · kaydedilen öğünler'),
+            const SizedBox(height:16),
+            SizedBox(height:170,child:Row(crossAxisAlignment:CrossAxisAlignment.end,
+              children:List.generate(7,(i){
+                final d=DateTime.now().subtract(Duration(days:6-i));
+                final entries=foods.where((f)=>f.date==day(d)).toList();
+                final value=entries.fold<double>(0,(sum,f)=>sum+f.energy);
+                final scale=target>0?target:1.0;
+                final fraction=(value/scale).clamp(0.0,1.0);
+                return Expanded(child:Padding(padding:const EdgeInsets.symmetric(horizontal:4),
+                  child:Column(mainAxisAlignment:MainAxisAlignment.end,children:[
+                    Text(value.toStringAsFixed(0),maxLines:1,style:const TextStyle(fontSize:10)),
+                    const SizedBox(height:4),
+                    Container(height:112,alignment:Alignment.bottomCenter,
+                      child:FractionallySizedBox(heightFactor:fraction,
+                        child:Container(decoration:BoxDecoration(
+                          color:value>target?Colors.deepOrange:green,
+                          borderRadius:const BorderRadius.vertical(top:Radius.circular(7)))))),
+                    const SizedBox(height:7),
+                    Text('${d.day}/${d.month}',style:const TextStyle(fontSize:10)),
+                  ]))));
+              }))),
+            const SizedBox(height:10),
+            const Text('Çubuklar günlük hedefe göre ölçeklenir; hedefi aşan değerler tam yükseklikte görünür.',
+              style:TextStyle(fontSize:12)),
+          ])),
           const Text('Son 7 günün kalori kayıtları',style:TextStyle(fontSize:18,fontWeight:FontWeight.w600)),
           const SizedBox(height:12),
           ...List.generate(7,(i){final d=DateTime.now().subtract(Duration(days:6-i)),group=foods.where((f)=>f.date==day(d)).toList(),total=group.fold<double>(0,(s,f)=>s+f.energy);return card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(day(d)),const SizedBox(height:8),meter('Kalori',total,target,'kcal'),const SizedBox(height:6),Text(group.isEmpty?'Kayıt yok':total>target?'Hedefin üzerinde':'Hedefin altında',style:const TextStyle(color:green))]));}),
