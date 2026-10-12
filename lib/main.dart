@@ -53,6 +53,48 @@ class Store {
     for(final table in tables){data[table]=await database.query(table);}
     return const JsonEncoder.withIndent('  ').convert(data);
   }
+  static Future<Map<String,List<Map<String,Object?>>>> validateBackup(String raw) async {
+    if(raw.length>5000000)throw const FormatException('Yedek çok büyük');
+    final decoded=jsonDecode(raw);
+    if(decoded is! Map || decoded['format']!='kalori_hesaplayici_backup' || decoded['version']!=1) {
+      throw const FormatException('Desteklenmeyen yedek biçimi');
+    }
+    final schema=<String,List<String>>{
+      'food_entries':['name','grams','kcal_per_100g','created_at','meal','protein','carbs','fat'],
+      'water_entries':['day','ml'],
+      'settings':['key','value'],
+      'favorites':['name','grams','kcal_per_100g','protein','carbs','fat'],
+      'weight_entries':['day','kg'],
+    };
+    final output=<String,List<Map<String,Object?>>>{};
+    for(final entry in schema.entries){
+      final rows=decoded[entry.key];
+      if(rows is! List || rows.length>50000)throw FormatException('Eksik veya geçersiz tablo: ${entry.key}');
+      final clean=<Map<String,Object?>>[];
+      for(final row in rows){
+        if(row is! Map)throw const FormatException('Geçersiz kayıt');
+        final item=<String,Object?>{};
+        for(final key in entry.value){
+          final value=row[key];
+          if(value is! String && value is! num)throw FormatException('Geçersiz alan: $key');
+          if(value is num && !value.isFinite)throw const FormatException('Geçersiz sayı');
+          item[key]=value;
+        }
+        clean.add(item);
+      }
+      output[entry.key]=clean;
+    }
+    return output;
+  }
+  static Future<void> restoreBackup(Map<String,List<Map<String,Object?>>> backup) async {
+    final database=await db;
+    await database.transaction((txn) async {
+      for(final table in ['food_entries','water_entries','settings','favorites','weight_entries']){
+        await txn.delete(table);
+        for(final record in backup[table]!){await txn.insert(table,record);}
+      }
+    });
+  }
   static Future<List<WeightRecord>> weights() async {
     final rows=await (await db).query('weight_entries',orderBy:'day DESC,id DESC');
     return rows.map((r)=>WeightRecord(id:r['id'] as int,date:r['day'] as String,kg:(r['kg'] as num).toDouble())).toList();
@@ -401,7 +443,28 @@ class _HomeState extends State<Home> {
                 }catch(e){fail(e);}
               }),
             const SizedBox(height:8),
-            const Text('Bu sürümde geri yükleme henüz yok. Panodaki içerik başka uygulamalar tarafından okunabilir.',
+            OutlinedButton.icon(icon:const Icon(Icons.restore_outlined),
+              label:const Text('Panodaki yedeği geri yükle'),onPressed:()async{
+                try{
+                  final clipboard=await Clipboard.getData('text/plain');
+                  final raw=clipboard?.text;
+                  if(raw==null || raw.isEmpty)throw const FormatException('Panoda yedek bulunamadı');
+                  final backup=await Store.validateBackup(raw);
+                  if(!mounted)return;
+                  final count=backup['food_entries']!.length;
+                  final confirmed=await showDialog<bool>(context:context,builder:(ctx)=>AlertDialog(
+                    title:const Text('Yedeği geri yükle?'),
+                    content:Text('Yedekte $count besin kaydı var. Mevcut TÜM besin, su, kilo, favori ve hedef kayıtların silinip yedekteki kayıtlarla değiştirilecek. Önce mevcut verilerini yedekle.'),
+                    actions:[TextButton(onPressed:()=>Navigator.pop(ctx,false),child:const Text('Vazgeç')),
+                      FilledButton(onPressed:()=>Navigator.pop(ctx,true),child:const Text('Verileri değiştir'))]));
+                  if(confirmed!=true)return;
+                  await Store.restoreBackup(backup);
+                  await reload();
+                  if(mounted)ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content:Text('Yedek başarıyla geri yüklendi')));
+                }catch(e){fail(e);}
+              }),
+            const Text('Geri yükleme mevcut tüm kayıtların yerini alır. Önce mevcut yedeğini al. Pano içeriği başka uygulamalar tarafından okunabilir.',
               style:TextStyle(fontSize:12)),
           ])),
           card(const Text('Verilerin cihazındaki SQLite veritabanında saklanır. Bulut senkronizasyonu, fotoğraftan besin analizi ve sağlık uygulaması bağlantısı bu sürümde yok.'))
