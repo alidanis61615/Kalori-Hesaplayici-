@@ -186,7 +186,9 @@ class _HomeState extends State<Home> {
   @override Widget build(BuildContext context){
     final today=foods.where((f)=>f.date==day(selected)).toList();
     final calories=today.fold<double>(0,(s,f)=>s+f.energy),protein=today.fold<double>(0,(s,f)=>s+f.p),carbs=today.fold<double>(0,(s,f)=>s+f.c),fat=today.fold<double>(0,(s,f)=>s+f.f);
-    return Scaffold(appBar:AppBar(title:Text(['Gün özeti','Trendler','Ekle','Raporlar','Profil'][tab],style:const TextStyle(fontWeight:FontWeight.bold))),
+    return Scaffold(appBar:AppBar(title:Text(['Gün özeti','Trendler','Ekle','Raporlar','Profil'][tab],style:const TextStyle(fontWeight:FontWeight.bold)),
+      actions:[if(tab==0)IconButton(tooltip:'Bugüne dön',icon:const Icon(Icons.today_outlined),
+        onPressed:(){setState(()=>selected=DateTime.now());reload();})]),
       bottomNavigationBar:NavigationBar(selectedIndex:tab,onDestinationSelected:(i){if(i==2){addFood();return;}setState(()=>tab=i);},destinations:const [
         NavigationDestination(icon:Icon(Icons.home_outlined),label:'Bugün'),NavigationDestination(icon:Icon(Icons.show_chart),label:'Trendler'),NavigationDestination(icon:Icon(Icons.add_circle_outline),label:'Ekle'),NavigationDestination(icon:Icon(Icons.description_outlined),label:'Raporlar'),NavigationDestination(icon:Icon(Icons.person_outline),label:'Profil')]),
       body:SafeArea(child:ListView(padding:const EdgeInsets.fromLTRB(16,12,16,24),children:[
@@ -199,6 +201,9 @@ class _HomeState extends State<Home> {
           card(Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
             const Text('Günlük enerji',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold)),const SizedBox(height:14),
             Text('${calories.toStringAsFixed(0)} / ${target.toStringAsFixed(0)} kcal',style:const TextStyle(fontSize:27,fontWeight:FontWeight.bold)),
+            const SizedBox(height:8),
+            Text(target>calories?'${(target-calories).toStringAsFixed(0)} kcal hedefe kaldı':'${(calories-target).toStringAsFixed(0)} kcal hedefin üzerinde',
+              style:TextStyle(color:calories>target?Colors.deepOrange:green,fontWeight:FontWeight.w600)),
             const SizedBox(height:14),meter('Kalori',calories,target,'kcal'),const Divider(height:30),
             meter('Protein',protein,pt,'g'),const SizedBox(height:14),meter('Karbonhidrat',carbs,ct,'g'),const SizedBox(height:14),meter('Yağ',fat,ft,'g')])),
           card(Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
