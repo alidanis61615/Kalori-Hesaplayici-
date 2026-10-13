@@ -1,34 +1,30 @@
-# Ekran Görüntüleri ve Yayın Kontrol Listesi
+# PaketKap — Portföy ve Sürüm Kontrolü
 
-Bu belge, Kalori Hesaplayıcı projesini GitHub portföyünde doğru ve güvenli biçimde sergilemek içindir.
+## Depodaki sunum
 
-## Önerilen ekran görüntüleri
+- [x] Gerçek Android cihaz ekran görüntüleri depoya eklendi.
+- [x] README içinde görüntülere bağlantı verildi.
+- [x] Özellikler, teknik yapı ve yerel kurulum belgelendi.
+- [x] Besin/model/trend testleri depoda bulunuyor.
+- [x] APK indirme adımları mevcut iş akışlarıyla eşleştirildi.
 
-1. **Gün özeti:** Günlük kalori ve makro hedefleri (örnek kayıtlarla).
-2. **Öğün ekleme:** Besin adı, gram ve makro alanları.
-3. **Su takibi:** Günlük su ilerlemesi.
-4. **Trendler:** Haftalık kalori grafiği ve örnek kilo grafiği.
-5. **Raporlar:** Son 7 günün kayıt özeti.
-6. **Profil:** Hedef ayarları ve yedekleme seçenekleri.
+Görseller kök dizindeki `Screenshot_20261012_*.jpg` dosyalarıdır. Galeri için [README](../README.md) dosyasına bakın.
 
-## Ekran görüntüsü hazırlama
+## Her sürümde kontrol edin
 
-- Gerçek isim, kişisel sağlık bilgisi veya başka özel bilgi göstermeyen **örnek veriler** kullanın.
-- Bildirim çubuğunda telefon numarası, e-posta ve diğer kişisel bilgilerin görünmediğini kontrol edin.
-- Görselleri PNG olarak `docs/screenshots/` klasörüne ekleyin.
-- Önerilen adlar: `today.png`, `add-food.png`, `water.png`, `trends.png`, `reports.png`, `profile.png`.
-- Görseller eklendikten sonra README içinde bağlantılarını açın. Henüz eklenmeyen dosyalara kırık bağlantı vermeyin.
+- [ ] Değiştirilen commit için analiz ve test sonucu başarılı.
+- [ ] APK derlemesi ve gerçek cihaza kurulum tamamlandı.
+- [ ] Besin ekleme, düzenleme ve silme doğru çalışıyor.
+- [ ] Su/kilo/hedef kayıtları yeniden açılışta korunuyor.
+- [ ] JSON yedek ve geri yükleme örnek verilerle çalışıyor.
+- [ ] Boş veri ve farklı ekran boyutları kontrol edildi.
+- [ ] Ekran görüntüleri güncel sürümü temsil ediyor.
 
-## APK yayın kontrolü
+## Derleme türleri
 
-- [ ] `flutter analyze --no-fatal-infos` başarılı
-- [ ] `flutter test` başarılı
-- [ ] `flutter build apk --debug` başarılı
-- [ ] Yeni APK mevcut uygulamanın üzerine kurulabiliyor
-- [ ] Besin ekleme, düzenleme ve silme çalışıyor
-- [ ] Su ve kilo kayıtları uygulama yeniden açıldığında korunuyor
-- [ ] JSON yedeği alınıyor ve test verileriyle geri yüklenebiliyor
-- [ ] Günlük ve haftalık grafikler doğru görünüyor
-- [ ] Ekran görüntüleri kişisel veri içermiyor
+| İş akışı | Artefakt | Çıktı |
+| --- | --- | --- |
+| Build Android APK | Kalori-Hesaplayici-APK | app-release.apk |
+| Flutter checks | kalori-hesaplayici-debug-apk | app-debug.apk |
 
-> Not: GitHub Actions tarafından üretilen APK bir **debug** derlemesidir. Google Play için ayrı bir imzalı release derlemesi ve mağaza gereklilikleri gerekir.
+Artefaktlar 14 gün saklanır. Mağaza yayını için imzalama ve dağıtım ayrıca yapılandırılmalıdır.

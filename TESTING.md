@@ -1,6 +1,6 @@
 # Katkı ve test rehberi
 
-Bu depo Kalori Hesaplayıcı uygulamasına aittir. TaskFlow ayrı bir projedir.
+Bu depo PaketKap beslenme takip uygulamasına aittir.
 
 ## Değişiklik öncesi
 - Yeni özellikleri ayrı bir dalda geliştirin.
@@ -16,7 +16,7 @@ Bu depo Kalori Hesaplayıcı uygulamasına aittir. TaskFlow ayrı bir projedir.
 - [ ] Su miktarı ekleme ve gün değişimi doğru çalışıyor.
 - [ ] Kapatıp açınca SQLite kayıtları korunuyor.
 - [ ] Trendler ve raporlar boş veride hata vermiyor.
-- [ ] Açık/koyu tema ve farklı ekran boyutları kontrol ediliyor.
+- [ ] Farklı ekran boyutları ve ekranlar arası geçiş kontrol ediliyor.
 - [ ] Android APK derlemesi başarıyla tamamlanıyor.
 
 ## Planlanan modüller

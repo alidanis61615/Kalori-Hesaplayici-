@@ -1,103 +1,95 @@
-# PaketKap | Flutter & Dart
+# PaketKap — Kalori ve Beslenme Takibi
 
-**PaketKap**, Türkçe arayüzlü, çevrimdışı çalışan Android kalori ve beslenme takip uygulamasıdır. Flutter, Dart, Material 3 ve SQLite ile geliştirilmiştir.
+Flutter ve Dart ile geliştirilen Android uygulaması; besin kayıtlarını, kişisel kalori ve makro hedeflerini, su tüketimini ve kilo değişimini tek yerde takip etmeyi kolaylaştırır. Veriler SQLite ile cihazda saklanır.
 
-[![Flutter CI](https://github.com/alidanis61615/PaketKap/actions/workflows/flutter-checks.yml/badge.svg)](https://github.com/alidanis61615/PaketKap/actions/workflows/flutter-checks.yml)
+[![Android build](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml/badge.svg?branch=main)](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml)
 
-**Hızlı bağlantılar:** [Teknik portföy özeti](docs/PORTFOLIO_OVERVIEW.md) · [Ekran görüntüsü ve yayın kontrol listesi](docs/PORTFOLIO_CHECKLIST.md) · [Otomatik testler ve APK](https://github.com/alidanis61615/PaketKap/actions)
-
-> **Portföy demosu:** Gün Özeti ekranında bir besin ekleyin; ardından su takibini ve Trendler ekranındaki 7 günlük grafikleri inceleyin. Uygulama internetsiz çalışır. Gerçek cihaz ekran görüntüleri henüz depoya eklenmedi.
+**[Ekranlar](#uygulama-ekranları) · [Kurulum](#yerelde-çalıştırma) · [Teknik özet](docs/PORTFOLIO_OVERVIEW.md) · [Test rehberi](TESTING.md)**
 
 ## Uygulama ekranları
 
-Gerçek Android cihazından alınan ekran görüntüleri, uygulamanın temel akışlarını gösterir. Görseller depoya eklendiğinde bu bölümde yan yana sergilenecektir.
+Gerçek Android cihazda çalışan uygulamadan alınan görüntüler. Görsellere tıklayarak büyük hâllerini açabilirsiniz.
 
-| Ekran | Gösterilen özellik |
-| --- | --- |
-| Gün Özeti | Günlük kalori ve makro hedefleri |
-| Öğün ve Su Takibi | Besin ekleme, favoriler, su miktarı düzenleme |
-| Trendler | 7/30/90 günlük dönemler, su tüketim grafiği ve kilo kayıtları |
-| Besin Ekleme | Porsiyon ve 100 g başına besin değeri girişi, form doğrulama |
-| Raporlar | Günlük kalori, makro, öğün ve su özeti |
-| Profil | Hedefleri düzenleme ve JSON veri yedeği |
+<p align="center">
+<a href="Screenshot_20261012_185949.jpg"><img src="Screenshot_20261012_185949.jpg" alt="PaketKap gün özeti" width="220"></a>
+<a href="Screenshot_20261012_185953.jpg"><img src="Screenshot_20261012_185953.jpg" alt="PaketKap öğün işlemleri" width="220"></a>
+<a href="Screenshot_20261012_185955.jpg"><img src="Screenshot_20261012_185955.jpg" alt="PaketKap su takibi" width="220"></a>
+</p>
+<p align="center">
+<a href="Screenshot_20261012_185959.jpg"><img src="Screenshot_20261012_185959.jpg" alt="PaketKap beslenme trendleri" width="220"></a>
+<a href="Screenshot_20261012_190002.jpg"><img src="Screenshot_20261012_190002.jpg" alt="PaketKap su tüketim grafiği" width="220"></a>
+<a href="Screenshot_20261012_190006.jpg"><img src="Screenshot_20261012_190006.jpg" alt="PaketKap besin ekleme formu" width="220"></a>
+</p>
+<p align="center">
+<a href="Screenshot_20261012_190013.jpg"><img src="Screenshot_20261012_190013.jpg" alt="PaketKap günlük raporları" width="220"></a>
+<a href="Screenshot_20261012_190016.jpg"><img src="Screenshot_20261012_190016.jpg" alt="PaketKap profil ve veri yedeği" width="220"></a>
+</p>
 
-> **Görsel hazırlığı:** Bu bölüme ait gerçek cihaz ekran görüntüleri toplandı; GitHub deposuna görsel dosyaları henüz yüklenmedi. Yüklendiğinde galeri bağlantıları eklenecektir.
+Bazı görüntüler boş kayıt durumunu gösterir. Güncel kodda sunulan özellikleri denemek için aşağıdaki demo akışını kullanın.
 
 ## Özellikler
-- **Gün özeti:** Kalori, protein, karbonhidrat ve yağ hedefleri; kalan kalori bilgisi.
-- **Öğün takibi:** Besin ekleme, düzenleme, silme; kahvaltı/öğle/akşam/atıştırmalık kategorileri.
-- **Besin kataloğu ve favoriler:** Örnek besinlerden hızlı ekleme; gram ve 100 gramlık değerleri düzenleme.
-- **Su takibi:** Günlük içilen suyu kaydetme.
-- **Trendler:** 7/30/90 günlük beslenme ortalamaları, son 7 gün kalori ve su grafikleri, su istatistikleri, kilo ölçümleri ve kilo grafiği.
-- **Raporlar:** Günlük ve haftalık özetler, su hedefi ilerlemesi ve hedefe yakın günler.
-- **Profil:** Kalori, makro ve günlük su hedeflerini düzenleme.
-- **Yerel yedek:** Besin, su, kilo, favori ve hedefleri JSON biçiminde panoya kopyalama; panodan geri yükleme. Geri yükleme mevcut kayıtların **tamamını değiştirir** ve onay ister.
 
-Besin değerleri elle girilir; katalogdaki değerler yaklaşık örneklerdir. Uygulama tıbbi tavsiye sunmaz.
+| Alan | İşlevler |
+| --- | --- |
+| Gün özeti | Kalori, protein, karbonhidrat ve yağ hedefleri; kalan kalori ve tarih seçimi |
+| Öğünler | Besin ekleme, düzenleme, onayla silme; öğüne göre filtreleme |
+| Besin kataloğu | Örnek besinlerde arama, favoriler ve öğünleri yarına kopyalama |
+| Su takibi | 100/250/500 ml ekleme, 100 ml geri alma, günlük hedef ve haftalık grafik |
+| Trendler | 7/30/90 günlük beslenme özetleri, kalori grafiği ve kilo kayıtları |
+| Raporlar | Günlük/haftalık özetler, makrolar ve hedefe yakın günler |
+| Profil ve yedek | Hedefleri düzenleme; JSON yedeğini panoya kopyalama ve onayla geri yükleme |
 
-## Teknolojiler
-- Flutter / Dart / Material 3
-- SQLite (`sqflite`) ve `path`
-- Flutter testleri ve GitHub Actions (analiz, test, debug APK)
+## Hızlı demo
 
-## Portföyde öne çıkan teknik noktalar
-- Günlük verileri SQLite ile kalıcı saklama ve veritabanı sürüm geçişleri.
-- Besinlerin enerji ve makro hesaplamalarını porsiyon gramına göre yapma.
-- JSON yedek içeriğini kontrol edip geri yüklemeyi veritabanı işlemi (transaction) içinde gerçekleştirme.
-- GitHub Actions ile statik analiz, otomatik test ve Android debug APK üretimi.
+1. **Bugün** ekranında bir besin ekleyin; gram miktarına göre kalori ve makroların değişimini inceleyin.
+2. **Su takibi** bölümünde 250 ml ekleyin ve hedef ilerlemesini kontrol edin.
+3. **Trendler** ekranında dönem seçin; kalori, su ve kilo kayıtlarını inceleyin.
+4. **Profil** ekranında günlük hedefleri düzenleyin ve JSON yedeğini alın.
 
-> **İsimlendirme notu:** GitHub deposu ve kullanıcıya görünen marka adı PaketKap'tır. Flutter proje kimliği (`kalori_hesaplayici`) mevcut Android uygulama kimliğiyle uyumluluğu korumak için değiştirilmemiştir.
+## Teknik yapı
+
+- **Arayüz:** Flutter Material 3; `CalorieApp`, `Home` ve `setState()` ile ekran durumu.
+- **Modeller:** `Food`, `WeightRecord`; gram miktarına göre enerji ve makro hesapları.
+- **Veri erişimi:** `Store` sınıfı ve SQLite; besin, su, hedef, favori ve kilo tabloları, veritabanı sürüm geçişleri.
+- **Analiz:** `lib/nutrition_trends.dart` arayüz ve SQLite'tan bağımsızdır. Ortalamalara yalnızca kayıt bulunan günler katılır.
+- **Yedekleme:** JSON biçim/sürüm ve alan kontrolleri; transaction içinde geri yükleme.
+- **Kontroller:** Besin hesapları, model dönüşümleri ve trend hesapları için testler; GitHub Actions ile analiz, test ve APK üretimi.
 
 ## Yerelde çalıştırma
-Flutter SDK ve Android geliştirme araçları gerekir.
+
+Flutter SDK, Android araçları ve bir cihaz/emülatör gerekir. Android proje dosyaları ilk kurulumda üretilir.
 
 ```bash
 git clone https://github.com/alidanis61615/PaketKap.git
 cd PaketKap
 flutter create --platforms=android --project-name kalori_hesaplayici .
+rm -f test/widget_test.dart
 flutter pub get
 flutter run
 ```
 
-## Android APK
-**Actions → Flutter checks / Build Android APK → başarılı çalışma → Artifacts** bölümünden `kalori-hesaplayici-debug-apk` dosyasını indirin. Bu bir **debug** derlemesidir; mağaza yayınına hazır imzalı sürüm değildir.
+Oluşturulan örnek `widget_test.dart`, uygulamanın `CalorieApp` sınıfını kullanmadığı için kaldırılır; depodaki proje testleri korunur. Windows PowerShell'de `Remove-Item test/widget_test.dart -ErrorAction SilentlyContinue` kullanılabilir.
 
-## Test
+## Analiz ve test
+
 ```bash
-flutter analyze --no-fatal-infos
+flutter analyze
 flutter test
 flutter build apk --debug
 ```
 
-## Veri güvenliği
-Kayıtlar varsayılan olarak cihazdaki SQLite veritabanında tutulur; bulut eşitleme yoktur. JSON yedeği panoya kopyalanır; panodaki içerik diğer uygulamalar tarafından okunabilir. Yedeği güvenli bir yerde saklayın. Geri yükleme mevcut kayıtları silip yedektekilerle değiştirir. Güncelleme öncesi uygulamayı kaldırmayın.
+## APK indirme
 
-## Bilinen sınırlar
-- Fotoğraftan otomatik besin analizi, barkod tarama, Health Connect ve bulut senkronizasyonu bulunmaz.
-- Kalori ve kilo grafikleri yalnızca kullanıcı tarafından girilen verileri gösterir.
-- Su hedefi örnek bir değerdir; kişiye özel sağlık önerisi değildir.
-- Android sürümleri ve farklı ekran boyutlarında ek testler yapılmalıdır.
+**[Actions → Build Android APK](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml)** altında başarılı bir çalışmanın **Artifacts** bölümünden `Kalori-Hesaplayici-APK` paketini indirin. Bu iş akışı `app-release.apk` üretir; mağaza yayını için imzalama ve dağıtım ayrıca yapılandırılmalıdır.
 
-## Uygulamadan ekran görüntüleri
+`Flutter checks` iş akışının başarılı çalışmalarında ayrıca `kalori-hesaplayici-debug-apk` adlı test paketi bulunabilir. Artefaktlar 14 gün saklanır; güncel bir başarılı çalışmayı seçin.
 
-Aşağıdaki görüntüler uygulamanın Android cihazda çalışan sürümünden alınmıştır. Görüntülerin üzerine basarak büyütebilirsiniz.
+## Veri ve kapsam
 
-<p align="center">
-<a href="Screenshot_20261012_185949.jpg"><img src="Screenshot_20261012_185949.jpg" alt="Gün özeti" width="230"></a>
-<a href="Screenshot_20261012_185953.jpg"><img src="Screenshot_20261012_185953.jpg" alt="Öğün işlemleri" width="230"></a>
-<a href="Screenshot_20261012_185955.jpg"><img src="Screenshot_20261012_185955.jpg" alt="Su takibi" width="230"></a>
-<a href="Screenshot_20261012_185959.jpg"><img src="Screenshot_20261012_185959.jpg" alt="Beslenme trendleri" width="230"></a>
-<a href="Screenshot_20261012_190002.jpg"><img src="Screenshot_20261012_190002.jpg" alt="Su tüketimi grafiği" width="230"></a>
-<a href="Screenshot_20261012_190006.jpg"><img src="Screenshot_20261012_190006.jpg" alt="Besin ekleme formu" width="230"></a>
-<a href="Screenshot_20261012_190013.jpg"><img src="Screenshot_20261012_190013.jpg" alt="Günlük raporlar" width="230"></a>
-<a href="Screenshot_20261012_190016.jpg"><img src="Screenshot_20261012_190016.jpg" alt="Profil ve veri yedeği" width="230"></a>
-</p>
+Kayıtlar cihazda tutulur; bulut eşitleme veya kullanıcı hesabı bulunmaz. JSON geri yükleme mevcut kayıtların tamamını değiştirir ve onay ister. Uygulamayı kaldırmadan önce yedek alın.
 
-**Gösterilen ekranlar:** Gün özeti, öğün ekleme, su takibi, 7/30/90 günlük trendler, su grafiği, besin ekleme formu, günlük raporlar ve profil/veri yedeği.
+Besin değerleri elle girilir; katalog örnek değerler içerir. Fotoğraftan otomatik besin analizi, barkod tarama ve Health Connect bu sürümde bulunmaz. Uygulama kişisel kayıt takibi içindir.
 
-> **Demo notu:** Bazı ekranlarda henüz besin kaydı bulunmadığından sıfır değerler ve boş durum mesajları gösterilir. Görseller gerçek uygulama ekranlarıdır; temsili mockup değildir.
+**İsimlendirme:** Ürün ve depo adı PaketKap'tır. Flutter proje kimliği `kalori_hesaplayici` olarak korunur.
 
-## Proje durumu
-Portföy geliştirmeleri test edilerek Pull Request #1 üzerinden `main` dalına birleştirildi. Uygulama Android cihazda manuel olarak da denendi. Ekran görüntüsü dosyalarının GitHub deposuna yüklenmesi henüz tamamlanmadı.
-
-**Geliştirme amacı:** Flutter/Dart, yerel veri saklama, kullanıcı arayüzü, hata ayıklama ve CI/CD becerilerini uygulamalı bir portföy projesinde göstermek.
+**Geliştirici:** [Ali Danış](https://github.com/alidanis61615) · Mobil Teknolojileri mezunu, Yazılım Geliştirici
