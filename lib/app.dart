@@ -7,7 +7,7 @@ class CalorieApp extends StatelessWidget {
   const CalorieApp({super.key});
   @override
   Widget build(BuildContext context) => MaterialApp(
-    title: 'PaketKap',
+    title: 'Kalori Takip',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
       useMaterial3: true,
