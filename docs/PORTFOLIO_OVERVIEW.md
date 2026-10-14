@@ -11,7 +11,7 @@ PaketKap, Flutter ve Dart ile geliştirilen Android beslenme takip uygulamasıd�
 | Hesaplama | Porsiyon gramına göre kalori ve makro değerleri |
 | Trend analizi | 7/30/90 günlük özet; kayıt olmayan günleri ortalamaya katmama |
 | Veri aktarımı | JSON yedeği doğrulama ve transaction içinde geri yükleme |
-| Test ve derleme | Besin/model/trend testleri; GitHub Actions ile analiz ve APK |
+| Test ve derleme | Besin/model/trend ve SQLite geri yükleme testleri; GitHub Actions ile analiz ve APK |
 
 ## İki dakikalık demo
 
@@ -24,7 +24,7 @@ PaketKap, Flutter ve Dart ile geliştirilen Android beslenme takip uygulamasıd�
 ## Kaynaklara hızlı erişim
 
 - [Özellikler, gerçek cihaz ekranları ve kurulum](../README.md)
-- [Arayüz, modeller ve SQLite erişimi](../lib/main.dart)
+- [Arayüz](../lib/screens/home.dart) · [Modeller](../lib/models/) · [SQLite](../lib/services/store.dart) · [Yedek doğrulama](../lib/services/backup_codec.dart)
 - [Bağımsız trend hesapları](../lib/nutrition_trends.dart)
 - [Otomatik testler](../test/)
 - [Manuel test rehberi](../TESTING.md)
@@ -34,6 +34,4 @@ PaketKap, Flutter ve Dart ile geliştirilen Android beslenme takip uygulamasıd�
 
 Besinler elle veya örnek katalogdan kaydedilir. Fotoğraftan otomatik analiz ve bulut eşitleme bulunmaz. Proje kimliği `kalori_hesaplayici`, ürün adı PaketKap'tır.
 
-`Build Android APK` iş akışı `Kalori-Hesaplayici-APK` adlı release APK artefaktı üretir. `Flutter checks` çalışmalarındaki `kalori-hesaplayici-debug-apk` test derlemesidir. Mağaza dağıtımı ayrıca yapılandırılır.
-
-**Geliştirici:** [Ali Danış](https://github.com/alidanis61615) · Mobil Teknolojileri mezunu, Yazılım Geliştirici
+[Kalıcı Android indirme sayfası](https://github.com/alidanis61615/PaketKap/releases/latest), `PaketKap-Android.apk` dosyasını içerir. `Build Android APK` iş akışı analiz ve testlerden sonra APK üretir. Kalıcı yayın yalnızca `main` üzerinden elle **publish** seçildiğinde yapılır. Mağaza dağıtımı ayrıca yapılandırılır.

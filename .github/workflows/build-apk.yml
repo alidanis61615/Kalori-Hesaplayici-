@@ -1,31 +1,73 @@
 name: Build Android APK
 on:
-  workflow_dispatch:
   push:
     branches: [main]
+    paths: ['lib/**', 'test/**', 'pubspec.yaml', '.github/workflows/build-apk.yml']
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish a permanent downloadable release
+        type: boolean
+        default: false
+      tag:
+        description: Release version
+        type: string
+        default: v1.1.0
+permissions:
+  contents: read
 jobs:
-  build:
+  build-apk:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-      - run: flutter create --platforms=android --project-name kalori_hesaplayici .
-      - run: rm -f test/widget_test.dart
+          flutter-version: '3.47.7'
+          cache: true
+      - name: Prepare Android project
+        run: |
+          flutter create --platforms=android --project-name kalori_hesaplayici .
+          rm -f test/widget_test.dart
+          python3 - <<'LABEL'
+          from pathlib import Path
+          import re
+          manifest = Path('android/app/src/main/AndroidManifest.xml')
+          manifest.write_text(re.sub(r'android:label="[^"]*"', 'android:label="PaketKap"', manifest.read_text()))
+          LABEL
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk --release
+      - name: Build release APK
+        run: |
+          flutter build apk --release
+          cp build/app/outputs/flutter-apk/app-release.apk PaketKap-Android.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Kalori-Hesaplayici-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: PaketKap-Android-APK
+          path: PaketKap-Android.apk
           if-no-files-found: error
           retention-days: 14
+  publish-release:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+    needs: build-apk
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: PaketKap-Android-APK
+          path: apk
+      - name: Publish tested Android download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
+          gh release create "$RELEASE_TAG" "apk/PaketKap-Android.apk#Download PaketKap for Android" --target "$GITHUB_SHA" --title "PaketKap $RELEASE_TAG" --notes-file release-notes.md
