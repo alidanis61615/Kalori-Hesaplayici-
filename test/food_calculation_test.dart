@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kalori_hesaplayici/main.dart';
+import 'package:kalori_hesaplayici/models/food.dart';
+import 'package:kalori_hesaplayici/utils/date.dart';
 
 void main() {
   group('Besin porsiyon hesaplamaları', () {

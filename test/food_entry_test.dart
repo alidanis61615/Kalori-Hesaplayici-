@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kalori_hesaplayici/main.dart';
+import 'package:kalori_hesaplayici/models/food.dart';
 
 void main() {
   test('Porsiyon kalorisi ve makrolar hesaplanır', () {

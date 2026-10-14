@@ -1,7 +1,7 @@
 name: kalori_hesaplayici
 description: Offline daily calorie tracker.
 publish_to: none
-version: 1.0.0+1
+version: 1.1.0+2
 environment:
   sdk: '>=3.4.0 <4.0.0'
 dependencies:
@@ -13,5 +13,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  sqflite_common_ffi: 2.3.4+4
 flutter:
   uses-material-design: true

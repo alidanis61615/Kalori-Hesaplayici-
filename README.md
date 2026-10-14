@@ -4,16 +4,17 @@ Flutter ve Dart ile geliştirilen Android uygulaması; besin kayıtlarını, ki�
 
 [![Android build](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml/badge.svg?branch=main)](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml)
 
-**[Ekranlar](#uygulama-ekranları) · [Kurulum](#yerelde-çalıştırma) · [Teknik özet](docs/PORTFOLIO_OVERVIEW.md) · [Test rehberi](TESTING.md)**
+**[Android APK indir](https://github.com/alidanis61615/PaketKap/releases/latest) · [Ekranlar](#uygulama-ekranları) · [Kurulum](#yerelde-çalıştırma) · [Teknik özet](docs/PORTFOLIO_OVERVIEW.md) · [Test rehberi](TESTING.md)**
 
 ## Teknik incelemeye hızlı başlangıç
 
 | İnceleme | Kaynak |
 | --- | --- |
-| Besin hesapları, SQLite ve JSON yedek doğrulama | [Modeller ve veri erişimi](lib/main.dart) |
+| Besin hesapları, SQLite ve JSON yedek doğrulama | [Besin modeli](lib/models/food.dart) · [SQLite servisi](lib/services/store.dart) · [Yedek doğrulama](lib/services/backup_codec.dart) |
 | Arayüzden bağımsız dönemsel analiz | [Trend hesapları](lib/nutrition_trends.dart) |
 | Porsiyon ve makro hesaplarının doğrulanması | [Hesaplama testleri](test/food_calculation_test.dart) |
 | Kayıt olmayan günler ve dönem özetleri | [Trend testleri](test/nutrition_trends_test.dart) |
+| Geçersiz yedek ve veritabanı hata durumları | [Doğrulama](test/backup_codec_test.dart) · [SQLite geri yükleme](test/store_backup_test.dart) |
 
 Projenin tasarımını ve demo akışını tek sayfada incelemek için [teknik portföy özetine](docs/PORTFOLIO_OVERVIEW.md) bakabilirsiniz.
 
@@ -63,8 +64,8 @@ Bazı görüntüler boş kayıt durumunu gösterir. Güncel kodda sunulan özell
 - **Modeller:** `Food`, `WeightRecord`; gram miktarına göre enerji ve makro hesapları.
 - **Veri erişimi:** `Store` sınıfı ve SQLite; besin, su, hedef, favori ve kilo tabloları, veritabanı sürüm geçişleri.
 - **Analiz:** `lib/nutrition_trends.dart` arayüz ve SQLite'tan bağımsızdır. Ortalamalara yalnızca kayıt bulunan günler katılır.
-- **Yedekleme:** JSON biçim/sürüm ve alan kontrolleri; transaction içinde geri yükleme.
-- **Kontroller:** Besin hesapları, model dönüşümleri ve trend hesapları için testler; GitHub Actions ile analiz, test ve APK üretimi.
+- **Yedekleme:** JSON biçim/sürüm, sayısal tür, takvim tarihi, öğün ve hedef kontrolleri; 5 MB boyut sınırı; tüm kontrollerden sonra transaction içinde geri yükleme.
+- **Kontroller:** Besin, model, trend, yedek doğrulama ve gerçek SQLite geri yükleme testleri; GitHub Actions ile analiz, test ve APK üretimi.
 
 ## Yerelde çalıştırma
 
@@ -91,9 +92,9 @@ flutter build apk --debug
 
 ## APK indirme
 
-**[Actions → Build Android APK](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml)** altında başarılı bir çalışmanın **Artifacts** bölümünden `Kalori-Hesaplayici-APK` paketini indirin. Bu iş akışı `app-release.apk` üretir; mağaza yayını için imzalama ve dağıtım ayrıca yapılandırılmalıdır.
+**[GitHub Releases → Android APK indir](https://github.com/alidanis61615/PaketKap/releases/latest)**. **Assets** bölümündeki `PaketKap-Android.apk` dosyasını indirin. Bu kalıcı dosya geçici Actions artefaktının saklama süresine bağlı değildir.
 
-`Flutter checks` iş akışının başarılı çalışmalarında ayrıca `kalori-hesaplayici-debug-apk` adlı test paketi bulunabilir. Artefaktlar 14 gün saklanır; güncel bir başarılı çalışmayı seçin.
+APK analiz ve testlerden sonra derlenir. Portföy demosudur; mağaza dağıtımı için ayrı üretim imzası gerekir. Yeni sürüm, `Build Android APK` iş akışında `main` üzerinden **publish** seçeneğiyle elle yayımlanır.
 
 ## Veri ve kapsam
 
