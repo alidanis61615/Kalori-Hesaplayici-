@@ -7,3 +7,5 @@
 - Android emülatöründe dolu ekran ve veri kalıcılığı kontrolü için tekrar çalıştırılabilir bir iş akışı eklendi.
 
 APK portföy demosudur; mağaza dağıtımı için kalıcı üretim imzası ayrıca yapılandırılmalıdır. Mevcut kurulumunuzu değiştirmeden önce JSON yedeğini alın. Fiziksel telefon testi ayrıca yapılmalıdır.
+
+**Doğrulama:** Android API 35 emülatöründe test akışı başarılı. Üretim APK'sı kuruldu, uygulama zorla kapatılıp yeniden açıldı ve kaydedilmiş veriler görünür kaldı. Ekli video çalışan uygulamadan kaydedildi; görünen kayıtlar kurgusal demo verileridir.

@@ -14,7 +14,6 @@ Besinlerin porsiyona göre kalori ve makro hesaplarını, SQLite kayıt akışı
 
 **Çözdüğüm hata:** Sayısal alanlarda metin veya geçersiz tarih içeren bir yedeğin kayıtları bozma ihtimalini giderdim. Doğrulama ve gerçek SQLite rollback testleriyle bu davranışı kontrol ettim. Arayüz testleri form, su, filtre ve hedef akışlarını; Android testleri veri kalıcılığını denetler.
 
-
 ## Teknik incelemeye hızlı başlangıç
 
 | İnceleme | Kaynak |
@@ -39,6 +38,10 @@ Android emülatöründe çalışan uygulamadan alınan gerçek arayüz görünt�
 | Haftalık grafik | Hedefler ve yedek |
 | --- | --- |
 | <img src="docs/media/kalori-grafik.png" alt="Kalori Takip: yedi güne ait dolu kalori grafiği" width="230"> | <img src="docs/media/kalori-profil.png" alt="Kalori Takip: kişisel hedefler ve veri yedekleme" width="230"> |
+
+## Kısa Android demosu
+
+[Çalışan uygulamanın kısa videosunu aç](docs/media/demo-android.mp4). Kayıt Android API 35 emülatöründe, örnek verilerle alınmıştır. [Doğrulama kaydı](docs/media/verification.json) APK'nın kurulduğunu ve uygulama yeniden açıldığında verilerin görünür kaldığını belgeleyen commit'i içerir. Fiziksel telefon kontrolü için [cihaz rehberini](docs/DEVICE_TEST.md) kullanabilirsiniz.
 
 ## Özellikler
 
@@ -95,7 +98,7 @@ flutter build apk --debug
 
 **[GitHub Releases → Android APK indir](https://github.com/alidanis61615/Kalori-Takip/releases/latest)**. **Assets** bölümündeki `Kalori-Takip-Android.apk` dosyasını indirin. Bu kalıcı dosya geçici Actions artefaktının saklama süresine bağlı değildir.
 
-APK analiz ve testlerden sonra derlenir. Portföy demosudur; mağaza dağıtımı için ayrı üretim imzası gerekir. Yeni sürüm, `Build Android APK` iş akışında `main` üzerinden **publish** seçeneğiyle elle yayımlanır.
+APK analiz ve testlerden sonra derlenir. Bu sürüm, başarılı Android kontrolünde kurulan APK'nın aynısını yayımlar; kaynak commit ve çalışma numarası [doğrulama kaydında](docs/media/verification.json) bulunur. Yayın iş akışı, kaynağın kontrol sonrasında değişmediğini doğrular. APK portföy demosudur; mağaza dağıtımı için ayrı üretim imzası gerekir.
 
 ## Veri ve kapsam
 

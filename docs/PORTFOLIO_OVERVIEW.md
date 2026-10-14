@@ -34,4 +34,4 @@ Kalori Takip, Flutter ve Dart ile geliştirilen Android beslenme takip uygulamas
 
 Besinler elle veya örnek katalogdan kaydedilir. Fotoğraftan otomatik analiz ve bulut eşitleme bulunmaz. Proje kimliği `kalori_hesaplayici`, ürün adı Kalori Takip'tır.
 
-[Kalıcı Android indirme sayfası](https://github.com/alidanis61615/Kalori-Takip/releases/latest), `Kalori-Takip-Android.apk` dosyasını içerir. `Build Android APK` iş akışı analiz ve testlerden sonra APK üretir. Kalıcı yayın yalnızca `main` üzerinden elle **publish** seçildiğinde yapılır. Mağaza dağıtımı ayrıca yapılandırılır.
+[Kalıcı Android indirme sayfası](https://github.com/alidanis61615/Kalori-Takip/releases/latest), `Kalori-Takip-Android.apk` dosyasını içerir. `Build Android APK` iş akışı analiz ve testlerden sonra APK üretir. Bu sürüm, Android kontrolünü geçen APK’yı `Publish reviewed Android release` iş akışıyla kalıcı olarak yayımlar; kontrol sonrası uygulama kaynağının değişmediği doğrulanır. Mağaza dağıtımı ayrıca yapılandırılır.
