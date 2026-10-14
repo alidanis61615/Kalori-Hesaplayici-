@@ -1,30 +1,29 @@
 # Kalori Takip — Portföy ve Sürüm Kontrolü
 
-## Depodaki sunum
+## 1.2.0 sürümünde doğrulananlar
 
-- [x] Gerçek Android cihaz ekran görüntüleri depoya eklendi.
-- [x] README içinde görüntülere bağlantı verildi.
-- [x] Özellikler, teknik yapı ve yerel kurulum belgelendi.
-- [x] Besin/model/trend testleri depoda bulunuyor.
-- [x] APK indirme adımları mevcut iş akışlarıyla eşleştirildi.
+- [x] Analiz ve 34 birim/arayüz testi başarılı.
+- [x] Ana ekran sekmelere, formlara ve controller'a ayrıldı.
+- [x] Dolu öğünler, hedefler ve grafikler çalışan Android uygulamasından kaydedildi.
+- [x] Yaklaşık 31 saniyelik Android demosu eklendi.
+- [x] Sürüm APK'sı Android API 35 emülatörüne kuruldu.
+- [x] Uygulama kapatılıp yeniden açıldı; kaydedilen öğünler görünür kaldı.
+- [x] Android kontrolündeki APK ve video kalıcı GitHub Releases dosyaları olarak yayımlandı.
+- [ ] Fiziksel telefon modeli ve Android sürümü kaydedilerek cihaz kontrolü tamamlandı.
 
-Görseller kök dizindeki `Screenshot_20261012_*.jpg` dosyalarıdır. Galeri için [README](../README.md) dosyasına bakın.
+Yeni galeri ve video `docs/media/` içindedir. Kök dizindeki eski ekran görüntüleri önceki sürüme aittir. Gösterilen kayıtlar kurgusal demo verileridir.
 
-## Her sürümde kontrol edin
+## Kontrolün kaynağı
 
-- [ ] Değiştirilen commit için analiz ve test sonucu başarılı.
-- [ ] APK derlemesi ve gerçek cihaza kurulum tamamlandı.
-- [ ] Besin ekleme, düzenleme ve silme doğru çalışıyor.
-- [ ] Su/kilo/hedef kayıtları yeniden açılışta korunuyor.
-- [ ] JSON yedek ve geri yükleme örnek verilerle çalışıyor.
-- [ ] Boş veri ve farklı ekran boyutları kontrol edildi.
-- [ ] Ekran görüntüleri güncel sürümü temsil ediyor.
+[Doğrulama kaydı](media/verification.json), test edilen commit'i ve başarılı Android çalışmasının bağlantısını içerir. [Fiziksel cihaz rehberi](DEVICE_TEST.md) ayrı kontrol listesidir; emülatör sonucu fiziksel telefon testi olarak işaretlenmez.
 
-## Derleme türleri
+## Yeni sürüm hazırlarken
 
-| İş akışı | Artefakt | Çıktı |
-| --- | --- | --- |
-| Build Android APK | Kalori-Hesaplayici-APK | app-release.apk |
-| Flutter checks | kalori-hesaplayici-debug-apk | app-debug.apk |
+- [ ] Değişen uygulama kaynağında analiz ve otomatik testler çalıştırıldı.
+- [ ] Android akışı, yeniden açılış ve veri korunması tekrar doğrulandı.
+- [ ] Ekran görüntüleri ve demo güncellendi.
+- [ ] JSON yedek alma/geri yükleme ve farklı ekran boyutları kontrol edildi.
+- [ ] Sürüm dosyasındaki commit ve başarılı çalışma numarası güncellendi.
+- [ ] APK ve demo sürüm sayfasında indirilebilir durumda.
 
-Artefaktlar 14 gün saklanır. Mağaza yayını için imzalama ve dağıtım ayrıca yapılandırılmalıdır.
+`Android demo and persistence` geçici artefaktı 30 gün saklar. [Kalıcı sürüm dosyaları](https://github.com/alidanis61615/Kalori-Takip/releases/latest) bu süreye bağlı değildir. Mağaza dağıtımı için kalıcı üretim imzası ayrıca yapılandırılmalıdır.
