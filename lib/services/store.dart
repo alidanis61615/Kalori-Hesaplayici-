@@ -8,19 +8,18 @@ import '../models/weight_record.dart';
 import 'backup_codec.dart';
 
 class Store {
-  Store({DatabaseFactory? factory, String? databasePath})
-    : _factory = factory,
-      _path = databasePath;
+  Store({this.factory, this.databasePath});
   static final instance = Store();
-  final DatabaseFactory? _factory;
-  final String? _path;
+  final DatabaseFactory? factory;
+  final String? databasePath;
   Database? _db;
   Future<Database> get db async {
     if (_db != null) return _db!;
-    final factory = _factory ?? databaseFactory;
+    final activeFactory = factory ?? databaseFactory;
     final path =
-        _path ?? p.join(await factory.getDatabasesPath(), 'calorie_tracker.db');
-    _db = await factory.openDatabase(
+        databasePath ??
+        p.join(await activeFactory.getDatabasesPath(), 'calorie_tracker.db');
+    _db = await activeFactory.openDatabase(
       path,
       options: OpenDatabaseOptions(
         version: 4,
