@@ -12,7 +12,7 @@ on:
       tag:
         description: Release version
         type: string
-        default: v1.1.0
+        default: v1.2.0
 permissions:
   contents: read
 jobs:
@@ -37,7 +37,7 @@ jobs:
           from pathlib import Path
           import re
           manifest = Path('android/app/src/main/AndroidManifest.xml')
-          manifest.write_text(re.sub(r'android:label="[^"]*"', 'android:label="PaketKap"', manifest.read_text()))
+          manifest.write_text(re.sub(r'android:label="[^"]*"', 'android:label="Kalori Takip"', manifest.read_text()))
           LABEL
       - run: flutter pub get
       - run: flutter analyze
@@ -45,11 +45,11 @@ jobs:
       - name: Build release APK
         run: |
           flutter build apk --release
-          cp build/app/outputs/flutter-apk/app-release.apk PaketKap-Android.apk
+          cp build/app/outputs/flutter-apk/app-release.apk Kalori-Takip-Android.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: PaketKap-Android-APK
-          path: PaketKap-Android.apk
+          name: Kalori-Takip-Android-APK
+          path: Kalori-Takip-Android.apk
           if-no-files-found: error
           retention-days: 14
   publish-release:
@@ -62,7 +62,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: PaketKap-Android-APK
+          name: Kalori-Takip-Android-APK
           path: apk
       - name: Publish tested Android download
         env:
@@ -70,4 +70,4 @@ jobs:
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
           [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
-          gh release create "$RELEASE_TAG" "apk/PaketKap-Android.apk#Download PaketKap for Android" --target "$GITHUB_SHA" --title "PaketKap $RELEASE_TAG" --notes-file release-notes.md
+          gh release create "$RELEASE_TAG" "apk/Kalori-Takip-Android.apk#Download Kalori Takip for Android" --target "$GITHUB_SHA" --title "Kalori Takip $RELEASE_TAG" --notes-file release-notes.md

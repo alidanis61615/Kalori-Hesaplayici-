@@ -1,0 +1,13 @@
+{
+  "app": "Kalori Takip",
+  "commit": "d96316aef1622f16bc093c81c516fd42a74332ad",
+  "platform": "Android API 35 emulator",
+  "data": "fictional portfolio sample records",
+  "checks": [
+    "integration workflow passed",
+    "production APK installed with adb -r",
+    "application force-stopped and relaunched",
+    "saved data visible after restart"
+  ],
+  "run_url": "https://github.com/alidanis61615/Kalori-Takip/actions/runs/38556823571"
+}

@@ -7,3 +7,7 @@ build/
 android/local.properties
 *.keystore
 *.jks
+
+__pycache__/
+*.pyc
+release-under-test.apk

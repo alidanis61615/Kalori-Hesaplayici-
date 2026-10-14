@@ -1,10 +1,11 @@
-## PaketKap 1.1.0
+## Kalori Takip 1.2.0
 
-Android cihazınıza kurarak portföy projesini deneyebilirsiniz. APK, bu sürümün kaynak kodundan GitHub Actions üzerinde analiz ve testlerden sonra derlenir.
+- Ürün adı Kalori Takip olarak güncellendi; mevcut SQLite dosyası ve uygulama kimliği korunur.
+- Bugün, Trendler, Raporlar, Profil ve form ekranları ayrı bileşenlerde düzenlendi.
+- Formlar kapandığında metin controller'ları temizlenir.
+- Besin, su, gün seçimi, filtreleme, hedef ve veritabanı geri yükleme testleri bulunur.
+- Android emülatöründe dolu ekran ve veri kalıcılığı kontrolü için tekrar çalıştırılabilir bir iş akışı eklendi.
 
-- Model, veritabanı servisi ve ekran kodları ayrı dosyalara taşındı.
-- JSON yedeklerinde sayı türleri, tarihler, öğünler ve hedefler doğrulanır.
-- Hatalı yedekler mevcut veriler silinmeden reddedilir; SQLite geri yükleme hatasında işlem geri alınır.
-- Yedek doğrulama ve gerçek SQLite geri yükleme testleri eklendi.
+APK portföy demosudur; mağaza dağıtımı için kalıcı üretim imzası ayrıca yapılandırılmalıdır. Mevcut kurulumunuzu değiştirmeden önce JSON yedeğini alın. Fiziksel telefon testi ayrıca yapılmalıdır.
 
-Bu APK portföy demosudur. Mağaza dağıtımı için ayrı üretim imzası yapılandırılmalıdır. Mevcut uygulama kurulumunuzu değiştirmeden önce verilerinizi yedekleyin.
+**Doğrulama:** Android API 35 emülatöründe test akışı başarılı. Üretim APK'sı kuruldu, uygulama zorla kapatılıp yeniden açıldı ve kaydedilmiş veriler görünür kaldı. Ekli video çalışan uygulamadan kaydedildi; görünen kayıtlar kurgusal demo verileridir.
