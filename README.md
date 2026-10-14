@@ -6,6 +6,17 @@ Flutter ve Dart ile geliştirilen Android uygulaması; besin kayıtlarını, ki�
 
 **[Ekranlar](#uygulama-ekranları) · [Kurulum](#yerelde-çalıştırma) · [Teknik özet](docs/PORTFOLIO_OVERVIEW.md) · [Test rehberi](TESTING.md)**
 
+## Teknik incelemeye hızlı başlangıç
+
+| İnceleme | Kaynak |
+| --- | --- |
+| Besin hesapları, SQLite ve JSON yedek doğrulama | [Modeller ve veri erişimi](lib/main.dart) |
+| Arayüzden bağımsız dönemsel analiz | [Trend hesapları](lib/nutrition_trends.dart) |
+| Porsiyon ve makro hesaplarının doğrulanması | [Hesaplama testleri](test/food_calculation_test.dart) |
+| Kayıt olmayan günler ve dönem özetleri | [Trend testleri](test/nutrition_trends_test.dart) |
+
+Projenin tasarımını ve demo akışını tek sayfada incelemek için [teknik portföy özetine](docs/PORTFOLIO_OVERVIEW.md) bakabilirsiniz.
+
 ## Uygulama ekranları
 
 Gerçek Android cihazda çalışan uygulamadan alınan görüntüler. Görsellere tıklayarak büyük hâllerini açabilirsiniz.
