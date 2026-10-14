@@ -55,7 +55,7 @@ void main() {
     for (final table in ['water_entries', 'settings']) {
       final backup = sampleBackup();
       final rows = backup[table] as List;
-      rows.add(Map.of(rows.single));
+      rows.add(Map<String, dynamic>.from(rows.single));
       expect(
         () => BackupCodec.decode(jsonEncode(backup)),
         throwsFormatException,

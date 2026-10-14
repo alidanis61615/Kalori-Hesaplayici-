@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
           'water_goal',
         ].map(Store.instance.getSetting),
       );
-      if (mounted)
+      if (mounted) {
         setState(() {
           foods = f;
           weights = weightRecords;
@@ -58,15 +58,17 @@ class _HomeState extends State<Home> {
           waterGoal = double.tryParse(settings[4] ?? '') ?? 2000;
           error = null;
         });
+      }
     } catch (e) {
       if (mounted) setState(() => error = 'Veriler yüklenemedi: $e');
     }
   }
 
   void fail(Object e) {
-    if (mounted)
+    if (mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('İşlem başarısız: $e')));
+    }
   }
 
   Widget card(Widget child) => Card(
@@ -428,9 +430,10 @@ class _HomeState extends State<Home> {
         ),
       );
       await reload();
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('${food.name} eklendi')));
+      }
     } catch (e) {
       fail(e);
     }
@@ -546,10 +549,11 @@ class _HomeState extends State<Home> {
         );
       }
       await reload();
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('${current.length} öğün yarına kopyalandı.')),
         );
+      }
     } catch (e) {
       fail(e);
     }
@@ -587,11 +591,12 @@ class _HomeState extends State<Home> {
           ),
           FilledButton(
             onPressed: () {
-              if (form.currentState!.validate())
+              if (form.currentState!.validate()) {
                 Navigator.pop(
                   ctx,
                   double.parse(controller.text.replaceAll(',', '.')),
                 );
+              }
             },
             child: const Text('Kaydet'),
           ),
@@ -1815,10 +1820,11 @@ class _HomeState extends State<Home> {
                             'text/plain',
                           );
                           final raw = clipboard?.text;
-                          if (raw == null || raw.isEmpty)
+                          if (raw == null || raw.isEmpty) {
                             throw const FormatException(
                               'Panoda yedek bulunamadı',
                             );
+                          }
                           final backup = await Store.instance.validateBackup(
                             raw,
                           );

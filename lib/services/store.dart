@@ -140,8 +140,9 @@ class Store {
   }
 
   Future<void> addWeight(String date, double kg) async {
-    if (!kg.isFinite || kg <= 0 || kg > 500)
+    if (!kg.isFinite || kg <= 0 || kg > 500) {
       throw ArgumentError('Geçerli bir kilo girin');
+    }
     await (await db).insert('weight_entries', {'day': date, 'kg': kg});
   }
 

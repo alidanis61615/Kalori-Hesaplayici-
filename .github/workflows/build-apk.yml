@@ -39,7 +39,7 @@ jobs:
           manifest.write_text(re.sub(r'android:label="[^"]*"', 'android:label="PaketKap"', manifest.read_text()))
           LABEL
       - run: flutter pub get
-      - run: flutter analyze --no-fatal-infos
+      - run: flutter analyze
       - run: flutter test
       - name: Build release APK
         run: |
