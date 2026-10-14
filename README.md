@@ -30,24 +30,15 @@ Projenin tasarımını ve demo akışını tek sayfada incelemek için [teknik p
 
 ## Uygulama ekranları
 
-Gerçek Android cihazda çalışan uygulamadan alınan görüntüler. Görsellere tıklayarak büyük hâllerini açabilirsiniz.
+Android emülatöründe çalışan uygulamadan alınan gerçek arayüz görüntüleri. Gösterilen öğünler, hedefler ve geçmiş kayıtları **kurgusal demo verileridir**. Ekranlar yeniden çalıştırılabilen [Android test akışı](.github/workflows/android-demo.yml) ile oluşturulur.
 
-<p align="center">
-<a href="Screenshot_20261012_185949.jpg"><img src="Screenshot_20261012_185949.jpg" alt="Kalori Takip gün özeti" width="220"></a>
-<a href="Screenshot_20261012_185953.jpg"><img src="Screenshot_20261012_185953.jpg" alt="Kalori Takip öğün işlemleri" width="220"></a>
-<a href="Screenshot_20261012_185955.jpg"><img src="Screenshot_20261012_185955.jpg" alt="Kalori Takip su takibi" width="220"></a>
-</p>
-<p align="center">
-<a href="Screenshot_20261012_185959.jpg"><img src="Screenshot_20261012_185959.jpg" alt="Kalori Takip beslenme trendleri" width="220"></a>
-<a href="Screenshot_20261012_190002.jpg"><img src="Screenshot_20261012_190002.jpg" alt="Kalori Takip su tüketim grafiği" width="220"></a>
-<a href="Screenshot_20261012_190006.jpg"><img src="Screenshot_20261012_190006.jpg" alt="Kalori Takip besin ekleme formu" width="220"></a>
-</p>
-<p align="center">
-<a href="Screenshot_20261012_190013.jpg"><img src="Screenshot_20261012_190013.jpg" alt="Kalori Takip günlük raporları" width="220"></a>
-<a href="Screenshot_20261012_190016.jpg"><img src="Screenshot_20261012_190016.jpg" alt="Kalori Takip profil ve veri yedeği" width="220"></a>
-</p>
+| Gün özeti | Öğün kayıtları | Dönem analizi |
+| --- | --- | --- |
+| <img src="docs/media/kalori-gun-ozeti.png" alt="Kalori Takip: dört öğün ve 1480 kcal içeren gün özeti" width="230"> | <img src="docs/media/kalori-ogunler.png" alt="Kalori Takip: örnek kayıtlarla dolu öğün listesi" width="230"> | <img src="docs/media/kalori-trendler.png" alt="Kalori Takip: kaydedilmiş günlerle beslenme analizi" width="230"> |
 
-Bazı görüntüler boş kayıt durumunu gösterir. Güncel kodda sunulan özellikleri denemek için aşağıdaki demo akışını kullanın.
+| Haftalık grafik | Hedefler ve yedek |
+| --- | --- |
+| <img src="docs/media/kalori-grafik.png" alt="Kalori Takip: yedi güne ait dolu kalori grafiği" width="230"> | <img src="docs/media/kalori-profil.png" alt="Kalori Takip: kişisel hedefler ve veri yedekleme" width="230"> |
 
 ## Özellikler
 
