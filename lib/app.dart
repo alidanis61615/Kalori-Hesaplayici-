@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'screens/home.dart';
+import 'controllers/nutrition_controller.dart';
 import 'theme.dart';
 
 class CalorieApp extends StatelessWidget {
-  const CalorieApp({super.key});
+  const CalorieApp({super.key, this.controller});
+  final NutritionController? controller;
   @override
   Widget build(BuildContext context) => MaterialApp(
     title: 'Kalori Takip',
@@ -14,6 +16,6 @@ class CalorieApp extends StatelessWidget {
       scaffoldBackgroundColor: const Color(0xFFF5F7F5),
       colorScheme: ColorScheme.fromSeed(seedColor: green),
     ),
-    home: const Home(),
+    home: Home(controller: controller),
   );
 }

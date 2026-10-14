@@ -16,7 +16,6 @@ class TrendsTab extends StatelessWidget {
     final foods = data.foods;
     final weights = data.weights;
     final waterDays = data.waterDays;
-    final selected = data.selected;
     final trendDays = data.trendDays;
     final target = data.target;
     final waterGoal = data.waterGoal;

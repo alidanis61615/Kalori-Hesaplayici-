@@ -12,6 +12,11 @@ class ReportsTab extends StatelessWidget {
   final NutritionActions actions;
   @override
   Widget build(BuildContext context) {
+    final today = data.today;
+    final calories = data.calories,
+        protein = data.protein,
+        carbs = data.carbs,
+        fat = data.fat;
     final foods = data.foods;
     final weights = data.weights;
     final selected = data.selected;

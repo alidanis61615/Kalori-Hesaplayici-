@@ -11,11 +11,15 @@ Finder field(String label) => find.byWidgetPredicate(
   (widget) => widget is TextField && widget.decoration?.labelText == label,
 );
 Future<void> reveal(WidgetTester tester, Finder target) async {
-  await tester.scrollUntilVisible(
-    target,
-    250,
-    scrollable: find.byType(Scrollable).first,
-  );
+  if (target.evaluate().isNotEmpty) {
+    await tester.ensureVisible(target);
+  } else {
+    await tester.scrollUntilVisible(
+      target,
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+  }
   await tester.pumpAndSettle();
 }
 
