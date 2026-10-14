@@ -4,6 +4,9 @@ on:
     branches: [feature/kalori-takip-1.2.0]
     paths: ['lib/**', 'integration_test/**', 'test_driver/**', 'scripts/**', 'pubspec.yaml', '.github/workflows/android-demo.yml']
   workflow_dispatch:
+concurrency:
+  group: android-demo-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -33,7 +36,7 @@ jobs:
           LABEL
       - run: flutter pub get
       - run: flutter analyze
-      - run: flutter test
+      - run: flutter test --timeout 60s
       - name: Prebuild application and instrumentation
         run: |
           flutter build apk --release

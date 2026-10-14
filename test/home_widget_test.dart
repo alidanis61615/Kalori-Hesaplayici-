@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:kalori_hesaplayici/controllers/nutrition_controller.dart';
 import 'package:kalori_hesaplayici/models/food.dart';
+import 'package:kalori_hesaplayici/models/weight_record.dart';
 import 'package:kalori_hesaplayici/screens/home.dart';
 import 'package:kalori_hesaplayici/services/store.dart';
 import 'package:kalori_hesaplayici/utils/date.dart';
@@ -23,15 +23,59 @@ Future<void> reveal(WidgetTester tester, Finder target) async {
   await tester.pumpAndSettle();
 }
 
+// Widget tests isolate UI behavior; store_backup_test.dart and Android integration
+// tests verify the production SQLite implementation independently.
+class MemoryStore extends Store {
+  final entries = <Food>[];
+  final waterByDay = <String, int>{};
+  final settings = <String, String>{};
+  int nextId = 1;
+  @override
+  Future<List<Food>> foods() async => List.of(entries);
+  @override
+  Future<void> add(Food food) async {
+    entries.add(Food.fromMap({...food.toMap(), 'id': nextId++}));
+  }
+
+  @override
+  Future<void> update(Food food) async {
+    entries[entries.indexWhere((row) => row.id == food.id)] = food;
+  }
+
+  @override
+  Future<void> delete(int id) async {
+    entries.removeWhere((row) => row.id == id);
+  }
+
+  @override
+  Future<int> water(String date) async => waterByDay[date] ?? 0;
+  @override
+  Future<Map<String, int>> waterHistory() async => Map.of(waterByDay);
+  @override
+  Future<void> addWater(String date, int amount) async {
+    waterByDay[date] = (waterByDay[date] ?? 0) + amount;
+  }
+
+  @override
+  Future<void> removeWater(String date, int amount) async {
+    waterByDay[date] = ((waterByDay[date] ?? 0) - amount).clamp(0, 1000000);
+  }
+
+  @override
+  Future<List<WeightRecord>> weights() async => [];
+  @override
+  Future<String?> getSetting(String key) async => settings[key];
+  @override
+  Future<void> setSetting(String key, String value) async {
+    settings[key] = value;
+  }
+}
+
 void main() {
-  sqfliteFfiInit();
   late Store store;
   late NutritionController data;
   setUp(() {
-    store = Store(
-      factory: databaseFactoryFfi,
-      databasePath: inMemoryDatabasePath,
-    );
+    store = MemoryStore();
     data = NutritionController(store: store);
   });
   tearDown(() async {
@@ -45,7 +89,7 @@ void main() {
   }
 
   Future<void> persisted(WidgetTester tester) async {
-    await tester.runAsync(() => data.pending);
+    await data.pending;
     await tester.pumpAndSettle();
   }
 
@@ -61,30 +105,29 @@ void main() {
     expect(find.text('Yiyecek adı gerekli'), findsOneWidget);
     expect(data.foods, isEmpty);
   });
-  testWidgets(
-    'Formdan besin eklenir ve yeniden açılan ekran SQLite kaydını gösterir',
-    (tester) async {
-      await load(tester);
-      await tester.tap(find.text('Ekle'));
-      await tester.pumpAndSettle();
-      await tester.enterText(field('Yiyecek adı'), 'Demo yoğurt');
-      await tester.enterText(field('Porsiyon (gram)'), '150');
-      await tester.enterText(field('Kalori (kcal / 100 g)'), '60,5');
-      await reveal(tester, find.text('Kaydet'));
-      await tester.tap(find.text('Kaydet'));
-      await tester.pumpAndSettle();
-      await persisted(tester);
-      expect(data.foods.single.name, 'Demo yoğurt');
-      expect(data.calories, 90.75);
-      await tester.pumpWidget(const SizedBox.shrink());
-      final reopened = NutritionController(store: store);
-      await tester.runAsync(reopened.reload);
-      await tester.pumpWidget(MaterialApp(home: Home(controller: reopened)));
-      await tester.pumpAndSettle();
-      expect(reopened.foods.single.name, 'Demo yoğurt');
-      reopened.dispose();
-    },
-  );
+  testWidgets('Formdan besin eklenir ve yeniden açılan ekran kaydı gösterir', (
+    tester,
+  ) async {
+    await load(tester);
+    await tester.tap(find.text('Ekle'));
+    await tester.pumpAndSettle();
+    await tester.enterText(field('Yiyecek adı'), 'Demo yoğurt');
+    await tester.enterText(field('Porsiyon (gram)'), '150');
+    await tester.enterText(field('Kalori (kcal / 100 g)'), '60,5');
+    await reveal(tester, find.text('Kaydet'));
+    await tester.tap(find.text('Kaydet'));
+    await tester.pumpAndSettle();
+    await persisted(tester);
+    expect(data.foods.single.name, 'Demo yoğurt');
+    expect(data.calories, 90.75);
+    await tester.pumpWidget(const SizedBox.shrink());
+    final reopened = NutritionController(store: store);
+    await tester.runAsync(reopened.reload);
+    await tester.pumpWidget(MaterialApp(home: Home(controller: reopened)));
+    await tester.pumpAndSettle();
+    expect(reopened.foods.single.name, 'Demo yoğurt');
+    reopened.dispose();
+  });
   testWidgets(
     'Su ekleme veritabanına yansır, seçilen gün değişince miktar ayrılır',
     (tester) async {
