@@ -2,7 +2,7 @@ name: Publish reviewed Android release
 on:
   push:
     branches: [main]
-    paths: ['.github/verified-release.json']
+    paths: ['.github/verified-release.json', '.github/workflows/publish-reviewed.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -58,4 +58,4 @@ jobs:
           ASSET=$(jq -r .asset .github/verified-release.json)
           TITLE=$(jq -r .title .github/verified-release.json)
           cp reviewed/release-under-test.apk "$ASSET"
-          gh release create "$RELEASE_TAG" "$ASSET#Android APK" "reviewed/docs/media/demo-android.mp4#Android demo" --target "$TESTED_SHA" --title "$TITLE" --notes-file release-notes.md
+          gh release create "$RELEASE_TAG" "$ASSET#Android APK" "reviewed/docs/media/demo-android.mp4#Android demo" --target "$GITHUB_SHA" --title "$TITLE" --notes-file release-notes.md
