@@ -1,7 +1,7 @@
 name: Android demo and persistence
 on:
   push:
-    branches: [feature/kalori-takip-1.2.0]
+    branches: [feature/kalori-takip-1.2.0, main]
     paths: ['lib/**', 'integration_test/**', 'test_driver/**', 'scripts/**', 'pubspec.yaml', '.github/workflows/android-demo.yml']
   workflow_dispatch:
 concurrency:
@@ -37,6 +37,13 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test --timeout 60s
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: android-gradle-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
+          restore-keys: android-gradle-${{ runner.os }}-
       - name: Prebuild application and instrumentation
         run: |
           flutter build apk --release
@@ -66,3 +73,22 @@ jobs:
             release-under-test.apk
           if-no-files-found: error
           retention-days: 30
+
+  publish-reviewed-release:
+    if: github.ref == 'refs/heads/main'
+    needs: android-demo
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: Kalori-Takip-Android-Demo
+          path: reviewed
+      - name: Publish the APK that passed Android checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp reviewed/release-under-test.apk Kalori-Takip-Android.apk
+          gh release create v1.2.0 "Kalori-Takip-Android.apk#Android APK" "reviewed/docs/media/demo-android.mp4#Android demo" --target "$GITHUB_SHA" --title "Kalori Takip v1.2.0" --notes-file release-notes.md

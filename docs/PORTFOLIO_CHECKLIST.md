@@ -1,4 +1,4 @@
-# PaketKap — Portföy ve Sürüm Kontrolü
+# Kalori Takip — Portföy ve Sürüm Kontrolü
 
 ## Depodaki sunum
 

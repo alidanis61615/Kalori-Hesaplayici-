@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:integration_test/integration_test_driver_extended.dart';
 
@@ -15,12 +16,14 @@ Future<void> main() async {
               'screenrecord',
               '--time-limit',
               '120',
+              '--size',
+              '540x1200',
               '--bit-rate',
               '3000000',
               '/sdcard/portfolio-demo.mp4',
             ]);
-            recording!.stdout.drain<void>();
-            recording!.stderr.drain<void>();
+            recording!.stdout.transform(utf8.decoder).listen(stdout.write);
+            recording!.stderr.transform(utf8.decoder).listen(stderr.write);
           }
           if (name.endsWith('profil') || name.endsWith('dark')) {
             await Process.run('adb', [

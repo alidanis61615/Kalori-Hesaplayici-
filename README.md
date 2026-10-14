@@ -1,20 +1,30 @@
-# PaketKap — Kalori ve Beslenme Takibi
+# Kalori Takip — Kalori ve Beslenme Takibi
 
 Flutter ve Dart ile geliştirilen Android uygulaması; besin kayıtlarını, kişisel kalori ve makro hedeflerini, su tüketimini ve kilo değişimini tek yerde takip etmeyi kolaylaştırır. Veriler SQLite ile cihazda saklanır.
 
-[![Android build](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml/badge.svg?branch=main)](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml)
+[![Android build](https://github.com/alidanis61615/Kalori-Takip/actions/workflows/build-apk.yml/badge.svg?branch=main)](https://github.com/alidanis61615/Kalori-Takip/actions/workflows/build-apk.yml)
 
-**[Android APK indir](https://github.com/alidanis61615/PaketKap/releases/latest) · [Ekranlar](#uygulama-ekranları) · [Kurulum](#yerelde-çalıştırma) · [Teknik özet](docs/PORTFOLIO_OVERVIEW.md) · [Test rehberi](TESTING.md)**
+**[Android APK indir](https://github.com/alidanis61615/Kalori-Takip/releases/latest) · [Ekranlar](#uygulama-ekranları) · [Kurulum](#yerelde-çalıştırma) · [Teknik özet](docs/PORTFOLIO_OVERVIEW.md) · [Test rehberi](TESTING.md)**
+
+## Bu portföy sürümündeki katkım
+
+Besinlerin porsiyona göre kalori ve makro hesaplarını, SQLite kayıt akışını, su/kilo takibini ve hedef ekranlarını geliştirdim. Ekranları, form bileşenlerini ve veriyi yükleyen controller'ı ayrı dosyalarda düzenledim.
+
+**Teknik kararım:** Verileri cihazda SQLite ile saklamak ve JSON yedeğinin tamamını mevcut kayıtları değiştirmeden önce doğrulamak. Geri yükleme sırasında bir hata olursa transaction önceki kayıtları korur.
+
+**Çözdüğüm hata:** Sayısal alanlarda metin veya geçersiz tarih içeren bir yedeğin kayıtları bozma ihtimalini giderdim. Doğrulama ve gerçek SQLite rollback testleriyle bu davranışı kontrol ettim. Arayüz testleri form, su, filtre ve hedef akışlarını; Android testleri veri kalıcılığını denetler.
+
 
 ## Teknik incelemeye hızlı başlangıç
 
 | İnceleme | Kaynak |
 | --- | --- |
+| Ekranlar ve form bileşenleri | [Sekmeler](lib/screens/tabs/) · [Formlar](lib/widgets/) · [Controller](lib/controllers/nutrition_controller.dart) |
 | Besin hesapları, SQLite ve JSON yedek doğrulama | [Besin modeli](lib/models/food.dart) · [SQLite servisi](lib/services/store.dart) · [Yedek doğrulama](lib/services/backup_codec.dart) |
 | Arayüzden bağımsız dönemsel analiz | [Trend hesapları](lib/nutrition_trends.dart) |
 | Porsiyon ve makro hesaplarının doğrulanması | [Hesaplama testleri](test/food_calculation_test.dart) |
 | Kayıt olmayan günler ve dönem özetleri | [Trend testleri](test/nutrition_trends_test.dart) |
-| Geçersiz yedek ve veritabanı hata durumları | [Doğrulama](test/backup_codec_test.dart) · [SQLite geri yükleme](test/store_backup_test.dart) |
+| Geçersiz yedek ve veritabanı hata durumları | [Doğrulama](test/backup_codec_test.dart) · [SQLite geri yükleme](test/store_backup_test.dart) · [Arayüz akışları](test/home_widget_test.dart) |
 
 Projenin tasarımını ve demo akışını tek sayfada incelemek için [teknik portföy özetine](docs/PORTFOLIO_OVERVIEW.md) bakabilirsiniz.
 
@@ -23,18 +33,18 @@ Projenin tasarımını ve demo akışını tek sayfada incelemek için [teknik p
 Gerçek Android cihazda çalışan uygulamadan alınan görüntüler. Görsellere tıklayarak büyük hâllerini açabilirsiniz.
 
 <p align="center">
-<a href="Screenshot_20261012_185949.jpg"><img src="Screenshot_20261012_185949.jpg" alt="PaketKap gün özeti" width="220"></a>
-<a href="Screenshot_20261012_185953.jpg"><img src="Screenshot_20261012_185953.jpg" alt="PaketKap öğün işlemleri" width="220"></a>
-<a href="Screenshot_20261012_185955.jpg"><img src="Screenshot_20261012_185955.jpg" alt="PaketKap su takibi" width="220"></a>
+<a href="Screenshot_20261012_185949.jpg"><img src="Screenshot_20261012_185949.jpg" alt="Kalori Takip gün özeti" width="220"></a>
+<a href="Screenshot_20261012_185953.jpg"><img src="Screenshot_20261012_185953.jpg" alt="Kalori Takip öğün işlemleri" width="220"></a>
+<a href="Screenshot_20261012_185955.jpg"><img src="Screenshot_20261012_185955.jpg" alt="Kalori Takip su takibi" width="220"></a>
 </p>
 <p align="center">
-<a href="Screenshot_20261012_185959.jpg"><img src="Screenshot_20261012_185959.jpg" alt="PaketKap beslenme trendleri" width="220"></a>
-<a href="Screenshot_20261012_190002.jpg"><img src="Screenshot_20261012_190002.jpg" alt="PaketKap su tüketim grafiği" width="220"></a>
-<a href="Screenshot_20261012_190006.jpg"><img src="Screenshot_20261012_190006.jpg" alt="PaketKap besin ekleme formu" width="220"></a>
+<a href="Screenshot_20261012_185959.jpg"><img src="Screenshot_20261012_185959.jpg" alt="Kalori Takip beslenme trendleri" width="220"></a>
+<a href="Screenshot_20261012_190002.jpg"><img src="Screenshot_20261012_190002.jpg" alt="Kalori Takip su tüketim grafiği" width="220"></a>
+<a href="Screenshot_20261012_190006.jpg"><img src="Screenshot_20261012_190006.jpg" alt="Kalori Takip besin ekleme formu" width="220"></a>
 </p>
 <p align="center">
-<a href="Screenshot_20261012_190013.jpg"><img src="Screenshot_20261012_190013.jpg" alt="PaketKap günlük raporları" width="220"></a>
-<a href="Screenshot_20261012_190016.jpg"><img src="Screenshot_20261012_190016.jpg" alt="PaketKap profil ve veri yedeği" width="220"></a>
+<a href="Screenshot_20261012_190013.jpg"><img src="Screenshot_20261012_190013.jpg" alt="Kalori Takip günlük raporları" width="220"></a>
+<a href="Screenshot_20261012_190016.jpg"><img src="Screenshot_20261012_190016.jpg" alt="Kalori Takip profil ve veri yedeği" width="220"></a>
 </p>
 
 Bazı görüntüler boş kayıt durumunu gösterir. Güncel kodda sunulan özellikleri denemek için aşağıdaki demo akışını kullanın.
@@ -60,7 +70,7 @@ Bazı görüntüler boş kayıt durumunu gösterir. Güncel kodda sunulan özell
 
 ## Teknik yapı
 
-- **Arayüz:** Flutter Material 3; `CalorieApp`, `Home` ve `setState()` ile ekran durumu.
+- **Arayüz:** Flutter Material 3; ayrı Bugün/Trendler/Raporlar/Profil sekmeleri, form bileşenleri ve `NutritionController` ile ekran durumu.
 - **Modeller:** `Food`, `WeightRecord`; gram miktarına göre enerji ve makro hesapları.
 - **Veri erişimi:** `Store` sınıfı ve SQLite; besin, su, hedef, favori ve kilo tabloları, veritabanı sürüm geçişleri.
 - **Analiz:** `lib/nutrition_trends.dart` arayüz ve SQLite'tan bağımsızdır. Ortalamalara yalnızca kayıt bulunan günler katılır.
@@ -72,8 +82,8 @@ Bazı görüntüler boş kayıt durumunu gösterir. Güncel kodda sunulan özell
 Flutter stable (Dart 3.12 veya üstü), Android araçları ve bir cihaz/emülatör gerekir. Android proje dosyaları ilk kurulumda üretilir.
 
 ```bash
-git clone https://github.com/alidanis61615/PaketKap.git
-cd PaketKap
+git clone https://github.com/alidanis61615/Kalori-Takip.git
+cd Kalori-Takip
 flutter create --platforms=android --project-name kalori_hesaplayici .
 rm -f test/widget_test.dart
 flutter pub get
@@ -92,7 +102,7 @@ flutter build apk --debug
 
 ## APK indirme
 
-**[GitHub Releases → Android APK indir](https://github.com/alidanis61615/PaketKap/releases/latest)**. **Assets** bölümündeki `PaketKap-Android.apk` dosyasını indirin. Bu kalıcı dosya geçici Actions artefaktının saklama süresine bağlı değildir.
+**[GitHub Releases → Android APK indir](https://github.com/alidanis61615/Kalori-Takip/releases/latest)**. **Assets** bölümündeki `Kalori-Takip-Android.apk` dosyasını indirin. Bu kalıcı dosya geçici Actions artefaktının saklama süresine bağlı değildir.
 
 APK analiz ve testlerden sonra derlenir. Portföy demosudur; mağaza dağıtımı için ayrı üretim imzası gerekir. Yeni sürüm, `Build Android APK` iş akışında `main` üzerinden **publish** seçeneğiyle elle yayımlanır.
 
@@ -102,6 +112,6 @@ Kayıtlar cihazda tutulur; bulut eşitleme veya kullanıcı hesabı bulunmaz. JS
 
 Besin değerleri elle girilir; katalog örnek değerler içerir. Fotoğraftan otomatik besin analizi, barkod tarama ve Health Connect bu sürümde bulunmaz. Uygulama kişisel kayıt takibi içindir.
 
-**İsimlendirme:** Ürün ve depo adı PaketKap'tır. Flutter proje kimliği `kalori_hesaplayici` olarak korunur.
+**İsimlendirme:** Ürün adı Kalori Takip'tir. Flutter proje kimliği `kalori_hesaplayici` olarak korunur.
 
 **Geliştirici:** [Ali Danış](https://github.com/alidanis61615) · Mobil Teknolojileri mezunu, Yazılım Geliştirici

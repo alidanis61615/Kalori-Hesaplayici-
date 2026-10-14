@@ -1,6 +1,6 @@
 # Katkı ve test rehberi
 
-Bu depo PaketKap beslenme takip uygulamasına aittir.
+Bu depo Kalori Takip beslenme takip uygulamasına aittir.
 
 ## Değişiklik öncesi
 - Yeni özellikleri ayrı bir dalda geliştirin.

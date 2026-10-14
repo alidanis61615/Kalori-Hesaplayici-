@@ -1,6 +1,6 @@
-# PaketKap — Teknik Portföy Özeti
+# Kalori Takip — Teknik Portföy Özeti
 
-PaketKap, Flutter ve Dart ile geliştirilen Android beslenme takip uygulamasıdır. Öğün, kalori, makro, su ve kilo kayıtlarını tek yerde toplar; günlük hedefler ve dönemsel özetler sunar.
+Kalori Takip, Flutter ve Dart ile geliştirilen Android beslenme takip uygulamasıdır. Öğün, kalori, makro, su ve kilo kayıtlarını tek yerde toplar; günlük hedefler ve dönemsel özetler sunar.
 
 ## Teknik olarak gösterdiği çalışmalar
 
@@ -28,10 +28,10 @@ PaketKap, Flutter ve Dart ile geliştirilen Android beslenme takip uygulamasıd�
 - [Bağımsız trend hesapları](../lib/nutrition_trends.dart)
 - [Otomatik testler](../test/)
 - [Manuel test rehberi](../TESTING.md)
-- [APK derlemeleri](https://github.com/alidanis61615/PaketKap/actions/workflows/build-apk.yml)
+- [APK derlemeleri](https://github.com/alidanis61615/Kalori-Takip/actions/workflows/build-apk.yml)
 
 ## Mevcut kapsam
 
-Besinler elle veya örnek katalogdan kaydedilir. Fotoğraftan otomatik analiz ve bulut eşitleme bulunmaz. Proje kimliği `kalori_hesaplayici`, ürün adı PaketKap'tır.
+Besinler elle veya örnek katalogdan kaydedilir. Fotoğraftan otomatik analiz ve bulut eşitleme bulunmaz. Proje kimliği `kalori_hesaplayici`, ürün adı Kalori Takip'tır.
 
-[Kalıcı Android indirme sayfası](https://github.com/alidanis61615/PaketKap/releases/latest), `PaketKap-Android.apk` dosyasını içerir. `Build Android APK` iş akışı analiz ve testlerden sonra APK üretir. Kalıcı yayın yalnızca `main` üzerinden elle **publish** seçildiğinde yapılır. Mağaza dağıtımı ayrıca yapılandırılır.
+[Kalıcı Android indirme sayfası](https://github.com/alidanis61615/Kalori-Takip/releases/latest), `Kalori-Takip-Android.apk` dosyasını içerir. `Build Android APK` iş akışı analiz ve testlerden sonra APK üretir. Kalıcı yayın yalnızca `main` üzerinden elle **publish** seçildiğinde yapılır. Mağaza dağıtımı ayrıca yapılandırılır.
