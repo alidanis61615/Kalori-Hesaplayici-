@@ -3,7 +3,7 @@ set -euo pipefail
 mkdir -p docs/media
 adb shell wm size 1080x2400
 adb shell wm density 420
-flutter drive --driver=test_driver/integration_test.dart --target=integration_test/portfolio_test.dart --use-application-binary=build/app/outputs/flutter-apk/app-debug.apk --keep-app-running -d emulator-5554
+python3 scripts/record-drive.py
 adb pull /sdcard/portfolio-demo.mp4 docs/media/demo-android.mp4
 # Install the production entrypoint without clearing the same SQLite data.
 adb install -r release-under-test.apk

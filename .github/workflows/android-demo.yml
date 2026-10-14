@@ -63,6 +63,13 @@ jobs:
           profile: pixel_7
           disable-animations: true
           script: bash scripts/android-demo.sh
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: android-gradle-${{ runner.os }}-${{ hashFiles('pubspec.yaml') }}
       - name: Upload screens, video, release APK and persistence evidence
         if: always()
         uses: actions/upload-artifact@v4
